@@ -1,0 +1,1147 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#0b0f17" />
+<title>Telefonluk Kasa • Gelir Gider</title>
+<style>
+  :root{
+    --bg:#0b0f17;
+    --card:#121a2a;
+    --muted:#8fa2c2;
+    --ink:#e8eefc;
+    --brand:#d4af37;
+    --danger:#ff5b6b;
+    --ok:#2dd4bf;
+    --line:rgba(255,255,255,.08);
+    --shadow: 0 10px 30px rgba(0,0,0,.35);
+    --r:16px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font: 15px/1.45 -apple-system, system-ui, Segoe UI, Roboto, Helvetica, Arial;
+    color:var(--ink);
+    background:
+      radial-gradient(1200px 700px at 10% -10%, rgba(212,175,55,.18), transparent 55%),
+      radial-gradient(900px 650px at 100% 0%, rgba(45,212,191,.12), transparent 55%),
+      linear-gradient(180deg, #070a10 0%, #0b0f17 50%, #070a10 100%);
+    padding: 14px 14px calc(18px + env(safe-area-inset-bottom));
+  }
+  .wrap{max-width:980px;margin:0 auto}
+  header{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:10px 6px 14px;
+  }
+  .title{display:flex;flex-direction:column;gap:2px}
+  h1{margin:0;font-size:18px;letter-spacing:.2px}
+  .sub{color:var(--muted);font-size:12.5px}
+  .pill{
+    display:inline-flex;align-items:center;gap:8px;
+    border:1px solid var(--line);
+    background: rgba(255,255,255,.03);
+    border-radius:999px;
+    padding:8px 10px;
+    box-shadow: var(--shadow);
+  }
+  .pill input[type="date"]{
+    background:transparent;border:0;color:var(--ink);font:inherit;
+  }
+  .pill input[type="date"]::-webkit-calendar-picker-indicator{filter: invert(1);opacity:.7}
+  .grid{display:grid;grid-template-columns: 1fr; gap:12px;}
+  @media(min-width:920px){ .grid{grid-template-columns: 1.1fr .9fr;} }
+  .card{
+    background: rgba(18,26,42,.78);
+    border:1px solid var(--line);
+    border-radius: var(--r);
+    box-shadow: var(--shadow);
+    overflow:hidden;
+  }
+  .card h2{
+    margin:0;
+    padding:12px 14px;
+    font-size:14px;
+    letter-spacing:.25px;
+    border-bottom:1px solid var(--line);
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+  }
+  .card .body{padding:12px 14px}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .row > *{flex:1}
+  label{display:block;color:var(--muted);font-size:12px;margin:0 0 6px}
+  input,select,button,textarea{
+    width:100%;
+    padding:11px 12px;
+    border-radius: 12px;
+    border:1px solid var(--line);
+    background: rgba(255,255,255,.03);
+    color:var(--ink);
+    outline:none;
+    font:inherit;
+  }
+  textarea{min-height:42px;resize:vertical}
+  input::placeholder, textarea::placeholder{color: rgba(232,238,252,.35)}
+  .btn{
+    cursor:pointer;
+    border:1px solid rgba(212,175,55,.35);
+    background: linear-gradient(180deg, rgba(212,175,55,.16), rgba(212,175,55,.06));
+    color: var(--ink);
+    font-weight:800;
+  }
+  .btn:active{transform: translateY(1px)}
+  .btn2{
+    cursor:pointer;
+    border:1px solid var(--line);
+    background: rgba(255,255,255,.04);
+    color: var(--ink);
+    font-weight:700;
+  }
+  .danger{
+    border-color: rgba(255,91,107,.35);
+    background: linear-gradient(180deg, rgba(255,91,107,.14), rgba(255,91,107,.05));
+  }
+  .ok{
+    border-color: rgba(45,212,191,.35);
+    background: linear-gradient(180deg, rgba(45,212,191,.14), rgba(45,212,191,.05));
+  }
+  .mini{font-size:12px;color:var(--muted);}
+  .kpis{display:grid;grid-template-columns: 1fr 1fr; gap:10px;}
+  .kpi{
+    border:1px solid var(--line);
+    border-radius: 14px;
+    padding:10px 12px;
+    background: rgba(255,255,255,.03);
+  }
+  .kpi .t{color:var(--muted);font-size:12px}
+  .kpi .v{font-size:18px;font-weight:900;letter-spacing:.2px;margin-top:4px}
+  .kpi .v small{font-size:12px;color:var(--muted);font-weight:700}
+  .kpi .v.brand{color: #f3e6b7}
+  .kpi .v.bad{color: #ffbcc4}
+  .kpi .v.good{color: #b7fff3}
+  table{width:100%;border-collapse: collapse;margin-top:10px;font-size:13px;}
+  th,td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+  th{color:var(--muted);font-size:12px;font-weight:800}
+  .tag{
+    display:inline-flex;gap:6px;align-items:center;
+    border:1px solid var(--line);
+    border-radius:999px;padding:4px 8px;
+    font-size:12px;color:var(--muted);
+    background: rgba(255,255,255,.03);
+    margin-right:6px;
+  }
+  .right{text-align:right}
+  .actions{display:flex;gap:10px;flex-wrap:wrap}
+  .actions button{flex:1;min-width:140px}
+  .footerNote{margin-top:10px;color:var(--muted);font-size:12px}
+  .split{display:flex;gap:10px;flex-wrap:wrap}
+  .split > div{flex:1;min-width:160px}
+  .hr{height:1px;background:var(--line);margin:10px 0}
+  .toast{
+    position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
+    padding:10px 12px;border-radius:999px;
+    background:rgba(0,0,0,.55);border:1px solid var(--line);
+    color:var(--ink);font-size:13px;opacity:0;pointer-events:none;
+    transition:.25s;
+    max-width:92vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .toast.show{opacity:1;bottom:22px}
+  .chartWrap{
+    border:1px solid var(--line);
+    border-radius: 14px;
+    padding:10px 12px;
+    background: rgba(255,255,255,.03);
+  }
+  .barRow{display:flex;align-items:center;gap:10px;margin:8px 0}
+  .barLbl{min-width:110px;font-weight:800}
+  .barBg{flex:1;height:12px;border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden;border:1px solid rgba(255,255,255,.08)}
+  .barFill{height:100%;background:rgba(212,175,55,.6)}
+  .barVal{min-width:88px;text-align:right;color:var(--muted);font-weight:800}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="title">
+      <h1>Telefonluk Kasa • Gelir–Gider</h1>
+      <div class="sub">Nakit/Kart ayrı • Eleman %50 • KDV • Gün/Ay raporları • Offline</div>
+    </div>
+    <div class="pill" title="Tarih seç">
+      <span style="color:var(--brand);font-weight:900">📅</span>
+      <input id="date" type="date" />
+    </div>
+  </header>
+
+  <div class="grid">
+    <!-- LEFT -->
+    <section class="card">
+      <h2>
+        <span>📥 Gelir Girişi</span>
+        <span class="mini" id="pricingHint"></span>
+      </h2>
+      <div class="body">
+        <div class="row">
+          <div>
+            <label>Hizmet</label>
+            <select id="service"></select>
+          </div>
+          <div>
+            <label>Adet</label>
+            <input id="qty" type="number" min="1" step="1" value="1" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>Eleman</label>
+            <select id="worker"></select>
+          </div>
+          <div>
+            <label>Ödeme</label>
+            <select id="pay">
+              <option value="cash">Nakit</option>
+              <option value="card">Kart</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>Fiyat (istersen değiştir)</label>
+            <input id="price" type="number" min="0" step="1" />
+          </div>
+          <div>
+            <label>Not (opsiyonel)</label>
+            <input id="noteIncome" type="text" placeholder="Örn: paket / indirim / ekstra" />
+          </div>
+        </div>
+
+        <div class="actions" style="margin-top:10px">
+          <button class="btn ok" id="addIncome">Geliri Ekle</button>
+          <button class="btn2" id="resetIncome">Temizle</button>
+        </div>
+
+        <div class="hr"></div>
+
+        <h2 style="padding:0;border:0;margin:0 0 6px;font-size:13px;color:var(--muted)">📤 Gider Girişi</h2>
+        <div class="row">
+          <div>
+            <label>Gider Türü</label>
+            <select id="expType">
+              <option value="Malzeme">Malzeme</option>
+              <option value="Kira">Kira</option>
+              <option value="Stopaj">Stopaj</option>
+              <option value="Elektrik">Elektrik</option>
+              <option value="Su">Su</option>
+              <option value="İnternet">İnternet</option>
+              <option value="Bağkur">Bağkur</option>
+              <option value="Diğer">Diğer</option>
+            </select>
+          </div>
+          <div>
+            <label>Tutar</label>
+            <input id="expAmount" type="number" min="0" step="1" placeholder="0" />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Ödeme</label>
+            <select id="expPay">
+              <option value="cash">Nakit</option>
+              <option value="card">Kart</option>
+            </select>
+          </div>
+          <div>
+            <label>Açıklama</label>
+            <input id="expNote" type="text" placeholder="Örn: jilet, boya, dezenfektan" />
+          </div>
+        </div>
+        <div class="actions" style="margin-top:10px">
+          <button class="btn danger" id="addExpense">Gideri Ekle</button>
+          <button class="btn2" id="resetExpense">Temizle</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT -->
+    <aside class="card">
+      <h2>💼 Kasa + KDV (Seçili Gün)</h2>
+      <div class="body">
+        <div class="kpis">
+          <div class="kpi">
+            <div class="t">Toplam Gelir (KDV dahil)</div>
+            <div class="v brand" id="kIncome">0 ₺</div>
+          </div>
+          <div class="kpi">
+            <div class="t">Toplam Gider</div>
+            <div class="v bad" id="kExpense">0 ₺</div>
+          </div>
+          <div class="kpi">
+            <div class="t">KDV (Gelir içinden)</div>
+            <div class="v" id="kVat">0 ₺</div>
+          </div>
+          <div class="kpi">
+            <div class="t">Net (KDV hariç, gider hariç)</div>
+            <div class="v" id="kNetEx">0 ₺</div>
+          </div>
+        </div>
+
+        <div class="split" style="margin-top:10px">
+          <div class="kpi">
+            <div class="t">Nakit (net)</div>
+            <div class="v good" id="kCash">0 ₺</div>
+          </div>
+          <div class="kpi">
+            <div class="t">Kart (net)</div>
+            <div class="v good" id="kCard">0 ₺</div>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="row">
+          <div>
+            <label>Gün Başı Kasa</label>
+            <input id="openCash" type="number" min="0" step="1" placeholder="0" />
+          </div>
+          <div>
+            <label>Aylık Sabit Gider (ay için)</label>
+            <input id="monthlyFixed" type="number" min="0" step="1" placeholder="Sen gir" />
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:8px">
+          <div>
+            <label>Gün Sonu Kasa (hesap)</label>
+            <input id="closeCash" type="text" readonly />
+          </div>
+          <div>
+            <label>Eleman % (komisyon)</label>
+            <input id="commissionRate" type="number" min="0" max="100" step="1" />
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:8px">
+          <div>
+            <label>KDV Oranı (%)</label>
+            <input id="vatRate" type="number" min="0" max="100" step="1" />
+          </div>
+          <div>
+            <label>Komisyon baz</label>
+            <select id="commissionBase">
+              <option value="exvat">KDV Hariç</option>
+              <option value="incvat">KDV Dahil</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="actions" style="margin-top:10px">
+          <button class="btn ok" id="saveDay">Gün Kapanışı Kaydet</button>
+          <button class="btn2" id="exportJson">Yedek (JSON)</button>
+          <button class="btn2 danger" id="wipe">Sıfırla</button>
+        </div>
+
+        <div class="footerNote">
+          ✅ iPhone: Paylaş → Ana Ekrana Ekle. İnternetsiz çalışır.
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="grid" style="margin-top:12px">
+    <section class="card">
+      <h2>🧾 Kayıtlar (Seçili Gün) <span class="mini">Sil: 🗑</span></h2>
+      <div class="body">
+        <div class="row">
+          <div>
+            <label>Liste</label>
+            <select id="listMode">
+              <option value="all">Gelir + Gider</option>
+              <option value="income">Sadece Gelir</option>
+              <option value="expense">Sadece Gider</option>
+            </select>
+          </div>
+          <div>
+            <label>Arama</label>
+            <input id="search" type="text" placeholder="hizmet / eleman / not..." />
+          </div>
+        </div>
+        <div style="overflow:auto">
+          <table id="table">
+            <thead>
+              <tr>
+                <th>Zaman</th>
+                <th>Tür</th>
+                <th>Detay</th>
+                <th class="right">Tutar</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>👤 Eleman Raporu (Seçili Gün)</h2>
+      <div class="body">
+        <div class="mini">Elemanlar %50. Sahip (Ahmet) için komisyon yazılmaz.</div>
+        <div style="overflow:auto">
+          <table id="workerDayTable">
+            <thead>
+              <tr>
+                <th>Eleman</th>
+                <th class="right">Ciro</th>
+                <th class="right">KDV</th>
+                <th class="right">Net (KDV hariç)</th>
+                <th class="right">Eleman Payı</th>
+                <th class="right">Dükkan Payı</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="hr"></div>
+        <div class="kpi">
+          <div class="t">Seçili Gün Toplam Eleman Ödemesi</div>
+          <div class="v" id="dayPayout">0 ₺</div>
+          <div class="mini" id="dayPayoutHint"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="grid" style="margin-top:12px">
+    <section class="card">
+      <h2>📊 Aylık Özet + Eleman Maaş/Komisyon</h2>
+      <div class="body">
+        <div class="row">
+          <div>
+            <label>Ay Seç</label>
+            <input id="monthPick" type="month" />
+          </div>
+          <div>
+            <label>Açık gün</label>
+            <select id="openDays">
+              <option value="26">26 gün (haftada 6 gün)</option>
+              <option value="30">30 gün</option>
+              <option value="24">24 gün</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="kpis" style="margin-top:10px">
+          <div class="kpi">
+            <div class="t">Ay Gelir (KDV dahil)</div>
+            <div class="v brand" id="mIncome">0 ₺</div>
+          </div>
+          <div class="kpi">
+            <div class="t">Ay KDV (gelir içinden)</div>
+            <div class="v" id="mVat">0 ₺</div>
+          </div>
+          <div class="kpi">
+            <div class="t">Ay Gider</div>
+            <div class="v bad" id="mExpense">0 ₺</div>
+          </div>
+          <div class="kpi">
+            <div class="t">Aylık Sabit</div>
+            <div class="v" id="mFixed">0 ₺</div>
+          </div>
+        </div>
+
+        <div class="kpi" style="margin-top:10px">
+          <div class="t">Net (KDV hariç) - (Gider + Sabit)</div>
+          <div class="v" id="mNetEx">0 ₺</div>
+          <div class="mini" id="mNetHint"></div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div style="overflow:auto">
+          <table id="workerMonthTable">
+            <thead>
+              <tr>
+                <th>Eleman</th>
+                <th class="right">Ciro</th>
+                <th class="right">KDV</th>
+                <th class="right">Net (KDV hariç)</th>
+                <th class="right">Eleman Payı</th>
+                <th class="right">Dükkan Payı</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="kpi">
+          <div class="t">Bugün kaç iş lazım? (kaba hedef)</div>
+          <div class="v" id="needJobs">—</div>
+          <div class="mini" id="needHint" style="margin-top:6px"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>📈 Hizmet Dağılımı (Ay)</h2>
+      <div class="body">
+        <div class="mini">Adet + ₺ bazında dağılım. (KDV dahil ciro)</div>
+        <div class="chartWrap" id="serviceChart"></div>
+        <div class="hr"></div>
+
+        <h2 style="padding:0;border:0;margin:0 0 8px;font-size:13px;color:var(--muted)">👥 Eleman Yönetimi</h2>
+        <div class="row">
+          <div>
+            <label>Yeni eleman adı</label>
+            <input id="newWorker" type="text" placeholder="Örn: Ali" />
+          </div>
+          <div>
+            <label>Tür</label>
+            <select id="newWorkerRole">
+              <option value="staff">Eleman</option>
+              <option value="owner">Sahip</option>
+            </select>
+          </div>
+        </div>
+        <div class="actions" style="margin-top:10px">
+          <button class="btn" id="addWorker">Eleman Ekle</button>
+        </div>
+
+        <div class="row" style="margin-top:10px">
+          <div>
+            <label>Eleman listesi</label>
+            <div id="workerList" class="mini"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+</div>
+
+<div class="toast" id="toast">Kaydedildi</div>
+
+<script>
+/*** ====== Telefonluk Kasa (offline) ======
+  - Eleman %50 komisyon
+  - KDV hesap (varsayılan %20, değiştirilebilir)
+  - Gün/Ay raporları + hizmet dağılım grafiği
+========================================== */
+const LS_KEY = "kasa_v2_ahmettekeli";
+const TL = (n)=> (Math.round((Number(n)||0)*100)/100).toLocaleString("tr-TR") + " ₺";
+const num = (x)=> Number(x)||0;
+const nowISO = ()=> new Date().toISOString();
+const todayLocalISO = ()=>{
+  const d = new Date();
+  const off = d.getTimezoneOffset();
+  const local = new Date(d.getTime() - off*60*1000);
+  return local.toISOString().slice(0,10);
+};
+const monthISO = (dstr)=> dstr.slice(0,7);
+const clamp = (v,min,max)=> Math.max(min, Math.min(max, v));
+
+function uid(){ return Math.random().toString(16).slice(2)+Math.random().toString(16).slice(2); }
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"), 1200);
+}
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, (m)=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));
+}
+
+const defaultState = ()=>({
+  services: [
+    {id:"hair", name:"Saç Kesim", price:500},
+    {id:"hairbeard", name:"Saç + Sakal", price:700},
+    {id:"beard", name:"Sakal", price:250}
+  ],
+  workers: [
+    {name:"Ahmet", role:"owner"},
+    {name:"Eleman 1", role:"staff"},
+    {name:"Eleman 2", role:"staff"}
+  ],
+  entries: [],
+  day: {}, // date -> {openCash, monthlyFixed, vatRate, commissionRate, commissionBase}
+});
+
+function load(){
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    if(!raw) return defaultState();
+    const s = JSON.parse(raw);
+
+    // migration v1 -> v2
+    if(Array.isArray(s.workers) && typeof s.workers[0] === "string"){
+      s.workers = s.workers.map((w,i)=>({name:w, role: i===0 ? "owner":"staff"}));
+    }
+    s.services ||= defaultState().services;
+    s.entries ||= [];
+    s.day ||= {};
+    return s;
+  }catch(e){ return defaultState(); }
+}
+function save(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+
+let state = load();
+
+/*** ====== UI refs ====== ***/
+const $ = (id)=> document.getElementById(id);
+
+const dateEl = $("date");
+const serviceEl = $("service");
+const qtyEl = $("qty");
+const workerEl = $("worker");
+const payEl = $("pay");
+const priceEl = $("price");
+const noteIncomeEl = $("noteIncome");
+
+const expTypeEl = $("expType");
+const expAmountEl = $("expAmount");
+const expPayEl = $("expPay");
+const expNoteEl = $("expNote");
+
+const openCashEl = $("openCash");
+const monthlyFixedEl = $("monthlyFixed");
+const closeCashEl = $("closeCash");
+const commissionRateEl = $("commissionRate");
+const vatRateEl = $("vatRate");
+const commissionBaseEl = $("commissionBase");
+
+const listModeEl = $("listMode");
+const searchEl = $("search");
+const tableBody = $("table").querySelector("tbody");
+
+const workerDayBody = $("workerDayTable").querySelector("tbody");
+const workerMonthBody = $("workerMonthTable").querySelector("tbody");
+
+const monthPickEl = $("monthPick");
+const openDaysEl = $("openDays");
+
+const newWorkerEl = $("newWorker");
+const newWorkerRoleEl = $("newWorkerRole");
+const workerListEl = $("workerList");
+const pricingHint = $("pricingHint");
+
+const serviceChartEl = $("serviceChart");
+
+/*** ====== Helpers ====== ***/
+function ensureDate(){
+  if(!dateEl.value) dateEl.value = todayLocalISO();
+}
+function getDaySettings(date){
+  state.day[date] ||= {openCash:0, monthlyFixed:0, vatRate:20, commissionRate:50, commissionBase:"exvat"};
+  // guard
+  state.day[date].vatRate = clamp(num(state.day[date].vatRate), 0, 100);
+  state.day[date].commissionRate = clamp(num(state.day[date].commissionRate), 0, 100);
+  state.day[date].commissionBase ||= "exvat";
+  return state.day[date];
+}
+function entriesForDate(date){ return state.entries.filter(e=>e.date===date); }
+function entriesForMonth(month){ return state.entries.filter(e=> monthISO(e.date)===month); }
+
+function setIncomePriceFromService(){
+  const sid = serviceEl.value;
+  const s = state.services.find(x=>x.id===sid);
+  priceEl.value = s ? s.price : 0;
+  pricingHint.textContent = s ? `${s.name}: ${TL(s.price)}` : "";
+}
+
+function renderSelectors(){
+  serviceEl.innerHTML = state.services.map(s=>`<option value="${s.id}">${escapeHtml(s.name)}</option>`).join("");
+  workerEl.innerHTML = state.workers.map(w=>`<option value="${escapeHtml(w.name)}">${escapeHtml(w.name)}${w.role==="owner"?" (Sahip)":" (Eleman)"}</option>`).join("");
+  serviceEl.value = state.services[0]?.id || "";
+  workerEl.value = state.workers[0]?.name || "Ahmet";
+  setIncomePriceFromService();
+}
+
+function sum(list, fn){ return list.reduce((a,x)=>a+num(fn(x)),0); }
+
+function vatFromGross(gross, vatRatePct){
+  // fiyatlar KDV dahil kabul: KDV = gross - gross/(1+rate)
+  const r = num(vatRatePct)/100;
+  if(r<=0) return 0;
+  return gross - (gross / (1+r));
+}
+function exVatFromGross(gross, vatRatePct){
+  const r = num(vatRatePct)/100;
+  if(r<=0) return gross;
+  return gross / (1+r);
+}
+
+function calcDay(date){
+  const set = getDaySettings(date);
+  const list = entriesForDate(date);
+
+  const incomes = list.filter(e=>e.type==="income");
+  const expenses = list.filter(e=>e.type==="expense");
+
+  const incomeGross = sum(incomes, e=>e.amount);
+  const expense = sum(expenses, e=>e.amount);
+
+  const vat = sum(incomes, e=> vatFromGross(e.amount, set.vatRate));
+  const incomeExVat = incomeGross - vat;
+
+  // net cash/card (kasa hesabı): nakitte gelir - gider (nakit)
+  const cashNet = sum(incomes.filter(e=>e.pay==="cash"), e=>e.amount) - sum(expenses.filter(e=>e.pay==="cash"), e=>e.amount);
+  const cardNet = sum(incomes.filter(e=>e.pay==="card"), e=>e.amount) - sum(expenses.filter(e=>e.pay==="card"), e=>e.amount);
+
+  const openCash = num(set.openCash);
+  const closeCash = openCash + cashNet;
+
+  const jobs = sum(incomes, e=> num(e.qty)||1);
+
+  return {set, incomeGross, expense, vat, incomeExVat, cashNet, cardNet, openCash, closeCash, jobs};
+}
+
+/*** ====== Worker reports (day/month) ====== ***/
+function workerRole(name){
+  const w = state.workers.find(x=>x.name===name);
+  return w ? w.role : "staff";
+}
+
+function calcWorkerBuckets(entries, vatRate){
+  // entries should be only income entries
+  const buckets = {};
+  for(const e of entries){
+    const wn = e.worker || "Bilinmiyor";
+    buckets[wn] ||= {gross:0, vat:0, exvat:0};
+    buckets[wn].gross += num(e.amount);
+    const v = vatFromGross(e.amount, vatRate);
+    buckets[wn].vat += v;
+    buckets[wn].exvat += (num(e.amount) - v);
+  }
+  return buckets;
+}
+
+function payoutForWorker(wn, totals, set){
+  const isOwner = workerRole(wn)==="owner";
+  const commRate = num(set.commissionRate)/100;
+
+  const base = (set.commissionBase==="incvat") ? totals.gross : totals.exvat;
+  const workerPay = isOwner ? 0 : base * commRate;
+  const shopPay = totals.exvat - (isOwner ? 0 : (set.commissionBase==="exvat" ? totals.exvat*commRate : (totals.exvat - (totals.gross*commRate - totals.vat*commRate))));
+  // shopPay üstte çok karışmasın: gösterimde shopPay = NetExVat - workerPay (workerPay baz ne olursa olsun dükkanın netten düşelim)
+  const shopShare = totals.exvat - workerPay;
+
+  return {workerPay, shopShare};
+}
+
+function renderWorkerDay(){
+  ensureDate();
+  const date = dateEl.value;
+  const {set} = calcDay(date);
+  const incomes = entriesForDate(date).filter(e=>e.type==="income");
+  const buckets = calcWorkerBuckets(incomes, set.vatRate);
+
+  // tüm elemanları göster (bugün iş yapmasa da)
+  const names = state.workers.map(w=>w.name);
+  let totalPayout = 0;
+
+  workerDayBody.innerHTML = names.map(n=>{
+    const t = buckets[n] || {gross:0, vat:0, exvat:0};
+    const {workerPay, shopShare} = payoutForWorker(n, t, set);
+    totalPayout += workerPay;
+
+    return `
+      <tr>
+        <td>${escapeHtml(n)} ${workerRole(n)==="owner" ? '<span class="tag">Sahip</span>':'<span class="tag">Eleman</span>'}</td>
+        <td class="right">${TL(t.gross)}</td>
+        <td class="right">${TL(t.vat)}</td>
+        <td class="right">${TL(t.exvat)}</td>
+        <td class="right" style="font-weight:900">${TL(workerPay)}</td>
+        <td class="right">${TL(shopShare)}</td>
+      </tr>
+    `;
+  }).join("");
+
+  $("dayPayout").textContent = TL(totalPayout);
+  $("dayPayoutHint").textContent =
+    `Komisyon: %${num(set.commissionRate)} • Baz: ${set.commissionBase==="exvat"?"KDV hariç":"KDV dahil"} (Sahip için komisyon 0)`;
+}
+
+function calcMonth(month){
+  const list = entriesForMonth(month);
+  const incomes = list.filter(e=>e.type==="income");
+  const expenses = list.filter(e=>e.type==="expense");
+
+  // O ay içinde girilen sabit: en yüksek değeri al
+  const fixedVals = Object.entries(state.day)
+    .filter(([d,_])=> d.startsWith(month))
+    .map(([_,v])=> num(v.monthlyFixed));
+  const fixed = fixedVals.length ? Math.max(...fixedVals) : 0;
+
+  // ay içinde vatRate farklı günlerde değişmiş olabilir:
+  // entry bazında, entry'nin gün ayarını kullanacağız.
+  const incomeGross = sum(incomes, e=>e.amount);
+  const vat = sum(incomes, e=>{
+    const set = getDaySettings(e.date);
+    return vatFromGross(e.amount, set.vatRate);
+  });
+  const incomeExVat = incomeGross - vat;
+
+  const expense = sum(expenses, e=>e.amount);
+
+  return {incomeGross, vat, incomeExVat, expense, fixed};
+}
+
+function renderWorkerMonth(){
+  if(!monthPickEl.value) monthPickEl.value = todayLocalISO().slice(0,7);
+  const month = monthPickEl.value;
+
+  // worker buckets by entry date vat
+  const incomes = entriesForMonth(month).filter(e=>e.type==="income");
+  const buckets = {};
+  for(const e of incomes){
+    const set = getDaySettings(e.date);
+    const wn = e.worker || "Bilinmiyor";
+    buckets[wn] ||= {gross:0, vat:0, exvat:0, commPay:0, shopShare:0};
+    const gross = num(e.amount);
+    const v = vatFromGross(gross, set.vatRate);
+    const exv = gross - v;
+
+    buckets[wn].gross += gross;
+    buckets[wn].vat += v;
+    buckets[wn].exvat += exv;
+
+    // komisyon: entry'nin gün ayarına göre
+    const isOwner = workerRole(wn)==="owner";
+    const commRate = num(set.commissionRate)/100;
+    const base = (set.commissionBase==="incvat") ? gross : exv;
+    const workerPay = isOwner ? 0 : base * commRate;
+    buckets[wn].commPay += workerPay;
+    buckets[wn].shopShare += (exv - workerPay);
+  }
+
+  const names = state.workers.map(w=>w.name);
+  workerMonthBody.innerHTML = names.map(n=>{
+    const t = buckets[n] || {gross:0, vat:0, exvat:0, commPay:0, shopShare:0};
+    return `
+      <tr>
+        <td>${escapeHtml(n)} ${workerRole(n)==="owner" ? '<span class="tag">Sahip</span>':'<span class="tag">Eleman</span>'}</td>
+        <td class="right">${TL(t.gross)}</td>
+        <td class="right">${TL(t.vat)}</td>
+        <td class="right">${TL(t.exvat)}</td>
+        <td class="right" style="font-weight:900">${TL(t.commPay)}</td>
+        <td class="right">${TL(t.shopShare)}</td>
+      </tr>
+    `;
+  }).join("");
+}
+
+/*** ====== Service distribution chart ====== ***/
+function renderServiceChart(){
+  const month = monthPickEl.value || todayLocalISO().slice(0,7);
+  const incomes = entriesForMonth(month).filter(e=>e.type==="income");
+
+  const byService = {};
+  for(const s of state.services){
+    byService[s.id] = {name:s.name, qty:0, gross:0};
+  }
+  for(const e of incomes){
+    const sid = e.service || "unknown";
+    if(!byService[sid]) byService[sid] = {name: e.serviceName || "Diğer", qty:0, gross:0};
+    byService[sid].qty += (num(e.qty)||1);
+    byService[sid].gross += num(e.amount);
+  }
+
+  const rows = Object.values(byService);
+  const maxGross = Math.max(1, ...rows.map(r=>r.gross));
+
+  serviceChartEl.innerHTML = rows.map(r=>{
+    const w = Math.round((r.gross / maxGross) * 100);
+    return `
+      <div class="barRow">
+        <div class="barLbl">${escapeHtml(r.name)}</div>
+        <div class="barBg"><div class="barFill" style="width:${w}%"></div></div>
+        <div class="barVal">${r.qty} • ${TL(r.gross)}</div>
+      </div>
+    `;
+  }).join("");
+}
+
+/*** ====== Table rendering ====== ***/
+function renderTable(){
+  const date = dateEl.value;
+  const mode = listModeEl.value;
+  const q = (searchEl.value||"").trim().toLowerCase();
+  let list = entriesForDate(date).slice().sort((a,b)=> (a.ts>b.ts?-1:1));
+
+  if(mode!=="all") list = list.filter(e=>e.type===mode);
+  if(q){
+    list = list.filter(e=>{
+      const blob = [
+        e.type, e.detail, e.worker, e.serviceName, e.note, e.pay
+      ].filter(Boolean).join(" ").toLowerCase();
+      return blob.includes(q);
+    });
+  }
+
+  tableBody.innerHTML = list.map(e=>{
+    const time = new Date(e.ts).toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"});
+    const type = e.type==="income" ? "Gelir" : "Gider";
+    const typeTag = e.type==="income" ? `<span class="tag">📥 ${type}</span>` : `<span class="tag">📤 ${type}</span>`;
+    const payTag = e.pay==="cash" ? `<span class="tag">💵 Nakit</span>` : `<span class="tag">💳 Kart</span>`;
+    const amount = (e.type==="expense" ? "-" : "") + TL(e.amount);
+    const detail = escapeHtml(e.detail||"");
+    const note = e.note ? `<div class="mini">${escapeHtml(e.note)}</div>` : "";
+    const worker = e.worker ? `<div class="mini">👤 ${escapeHtml(e.worker)}</div>` : "";
+    return `
+      <tr>
+        <td class="mini">${time}</td>
+        <td>${typeTag}${payTag}</td>
+        <td><div style="font-weight:900">${detail}</div>${worker}${note}</td>
+        <td class="right" style="font-weight:900">${amount}</td>
+        <td class="right"><button class="btn2 danger" data-del="${e.id}" style="width:auto;padding:8px 10px;border-radius:10px">🗑</button></td>
+      </tr>
+    `;
+  }).join("");
+
+  tableBody.querySelectorAll("[data-del]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const id = btn.getAttribute("data-del");
+      state.entries = state.entries.filter(e=>e.id!==id);
+      save();
+      toast("Silindi");
+      renderAll();
+    });
+  });
+}
+
+function renderWorkers(){
+  workerListEl.innerHTML = state.workers.map((w,i)=>{
+    const canDel = state.workers.length>1 && i!==0; // ilkini (Ahmet) koru
+    const del = canDel ? ` <button class="btn2 danger" data-wdel="${i}" style="width:auto;padding:6px 8px;border-radius:10px">Sil</button>` : "";
+    return `<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px dashed rgba(255,255,255,.07)">
+      <div>• ${escapeHtml(w.name)} ${w.role==="owner"?'<span class="tag">Sahip</span>':'<span class="tag">Eleman</span>'}</div>
+      <div>${del}</div>
+    </div>`;
+  }).join("");
+
+  workerListEl.querySelectorAll("[data-wdel]").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      const idx = Number(b.getAttribute("data-wdel"));
+      state.workers.splice(idx,1);
+      save();
+      toast("Eleman silindi");
+      renderSelectors();
+      renderWorkers();
+      renderAll();
+    });
+  });
+}
+
+/*** ====== Month summary ====== ***/
+function renderMonth(){
+  if(!monthPickEl.value) monthPickEl.value = todayLocalISO().slice(0,7);
+  const m = monthPickEl.value;
+  const r = calcMonth(m);
+
+  $("mIncome").textContent = TL(r.incomeGross);
+  $("mVat").textContent = TL(r.vat);
+  $("mExpense").textContent = TL(r.expense);
+  $("mFixed").textContent = TL(r.fixed);
+
+  const netEx = r.incomeExVat - r.expense - r.fixed;
+  $("mNetEx").textContent = TL(netEx);
+  $("mNetHint").textContent = "Net (KDV hariç gelir) - (gider + sabit). Eleman payları ayrıca tabloda.";
+
+  // günlük hedef (kaba): (sabit + gider) / açık gün
+  const openDays = num(openDaysEl.value)||26;
+  const dailyNeed = (r.fixed + r.expense) / Math.max(1, openDays);
+
+  // Ortalama sepet: (0.4*700 + 0.4*500 + 0.2*250) -> senin fiyatlardan
+  const avgTicket = (0.4*700 + 0.4*500 + 0.2*250);
+  const jobsNeed = Math.ceil(dailyNeed / Math.max(1, avgTicket));
+
+  $("needJobs").textContent = `${jobsNeed} iş / gün`;
+  $("needHint").textContent =
+    `Hedef (kaba): (Aylık Sabit + Bu ay girilen gider) / ${openDays} gün. Ortalama sepet ~ ${TL(avgTicket)} varsayıldı.`;
+}
+
+/*** ====== Main render ====== ***/
+function renderDay(){
+  ensureDate();
+  const date = dateEl.value;
+  const d = calcDay(date);
+  const set = d.set;
+
+  openCashEl.value = num(set.openCash);
+  monthlyFixedEl.value = num(set.monthlyFixed);
+  commissionRateEl.value = num(set.commissionRate);
+  vatRateEl.value = num(set.vatRate);
+  commissionBaseEl.value = set.commissionBase || "exvat";
+
+  $("kIncome").textContent = TL(d.incomeGross);
+  $("kExpense").textContent = TL(d.expense);
+  $("kVat").textContent = TL(d.vat);
+  $("kNetEx").textContent = TL(d.incomeExVat);
+
+  // cash/card net (kasa tarafı)
+  $("kCash").textContent = TL(d.cashNet);
+  $("kCard").textContent = TL(d.cardNet);
+
+  closeCashEl.value = TL(d.closeCash);
+}
+
+function renderAll(){
+  renderDay();
+  renderTable();
+  renderWorkerDay();
+  renderMonth();
+  renderWorkerMonth();
+  renderServiceChart();
+}
+
+/*** ====== Actions ====== ***/
+$("addIncome").addEventListener("click", ()=>{
+  ensureDate();
+  const date = dateEl.value;
+  const sid = serviceEl.value;
+  const s = state.services.find(x=>x.id===sid);
+  const qty = Math.max(1, num(qtyEl.value)||1);
+  const price = Math.max(0, num(priceEl.value)||0);
+  const amount = qty * price;
+
+  const entry = {
+    id: uid(),
+    type: "income",
+    date,
+    ts: nowISO(),
+    detail: s ? s.name : "Gelir",
+    service: sid,
+    serviceName: s ? s.name : "",
+    qty,
+    amount,
+    pay: payEl.value,
+    worker: workerEl.value,
+    note: noteIncomeEl.value.trim()
+  };
+  state.entries.push(entry);
+  save();
+  toast("Gelir eklendi");
+  noteIncomeEl.value = "";
+  qtyEl.value = 1;
+  renderAll();
+});
+
+$("resetIncome").addEventListener("click", ()=>{
+  qtyEl.value = 1;
+  payEl.value = "cash";
+  noteIncomeEl.value = "";
+  setIncomePriceFromService();
+  toast("Temizlendi");
+});
+
+$("addExpense").addEventListener("click", ()=>{
+  ensureDate();
+  const date = dateEl.value;
+  const amount = Math.max(0, num(expAmountEl.value)||0);
+  if(!amount){ toast("Tutar gir"); return; }
+
+  const entry = {
+    id: uid(),
+    type: "expense",
+    date,
+    ts: nowISO(),
+    detail: expTypeEl.value,
+    amount,
+    pay: expPayEl.value,
+    note: expNoteEl.value.trim()
+  };
+  state.entries.push(entry);
+  save();
+  toast("Gider eklendi");
+  expAmountEl.value = "";
+  expNoteEl.value = "";
+  renderAll();
+});
+
+$("resetExpense").addEventListener("click", ()=>{
+  expAmountEl.value = "";
+  expNoteEl.value = "";
+  expPayEl.value = "cash";
+  expTypeEl.value = "Malzeme";
+  toast("Temizlendi");
+});
+
+$("saveDay").addEventListener("click", ()=>{
+  ensureDate();
+  const date = dateEl.value;
+  const set = getDaySettings(date);
+  set.openCash = Math.max(0, num(openCashEl.value)||0);
+  set.monthlyFixed = Math.max(0, num(monthlyFixedEl.value)||0);
+  set.vatRate = clamp(num(vatRateEl.value), 0, 100);
+  set.commissionRate = clamp(num(commissionRateEl.value), 0, 100);
+  set.commissionBase = commissionBaseEl.value || "exvat";
+  state.day[date] = set;
+  save();
+  toast("Gün ayarları kaydedildi");
+  renderAll();
+});
+
+$("exportJson").addEventListener("click", ()=>{
+  const blob = new Blob([JSON.stringify(state,null,2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `kasa_yedek_${todayLocalISO()}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  toast("Yedek indirildi");
+});
+
+$("wipe").addEventListener("click", ()=>{
+  const ok = confirm("TÜM kayıtlar silinsin mi? (geri alınamaz)");
+  if(!ok) return;
+  state = defaultState();
+  save();
+  toast("Sıfırlandı");
+  init();
+});
+
+$("addWorker").addEventListener("click", ()=>{
+  const name = (newWorkerEl.value||"").trim();
+  if(!name){ toast("İsim yaz"); return; }
+  const role = newWorkerRoleEl.value || "staff";
+  state.workers.push({name, role});
+  save();
+  newWorkerEl.value = "";
+  toast("Eleman eklendi");
+  renderSelectors();
+  renderWorkers();
+  renderAll();
+});
+
+serviceEl.addEventListener("change", setIncomePriceFromService);
+dateEl.addEventListener("change", renderAll);
+listModeEl.addEventListener("change", renderTable);
+searchEl.addEventListener("input", renderTable);
+monthPickEl.addEventListener("change", ()=>{
+  renderMonth();
+  renderWorkerMonth();
+  renderServiceChart();
+});
+openDaysEl.addEventListener("change", renderMonth);
+vatRateEl.addEventListener("change", ()=>{ /* kaydetmeden önizleme */ renderAll(); });
+commissionRateEl.addEventListener("change", ()=>{ renderAll(); });
+commissionBaseEl.addEventListener("change", ()=>{ renderAll(); });
+
+/*** ====== Init ====== ***/
+function init(){
+  dateEl.value = todayLocalISO();
+  monthPickEl.value = todayLocalISO().slice(0,7);
+  renderSelectors();
+  renderWorkers();
+  renderAll();
+}
+init();
+</script>
+</body>
+</html>
