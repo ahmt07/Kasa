@@ -2,162 +2,172 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Berber Kasa Sistemi</title>
 <style>
-body{font-family:Arial;background:#111;color:#fff;text-align:center}
-button,input,select{padding:10px;margin:5px;font-size:16px}
-table{margin:auto;border-collapse:collapse;width:90%}
-td,th{border:1px solid #555;padding:8px}
-.nav button{font-size:18px}
-.hidden{display:none}
+body{
+    font-family: Arial, sans-serif;
+    background:#111;
+    color:#fff;
+    margin:0;
+    padding:20px;
+}
+.container{max-width:900px;margin:auto;}
+h1{text-align:center;}
+.card{
+    background:#1e1e1e;
+    padding:20px;
+    margin-bottom:20px;
+    border-radius:12px;
+}
+input,select,button{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border-radius:8px;
+    border:none;
+}
+button{
+    background:#0f62fe;
+    color:#fff;
+    font-weight:bold;
+    cursor:pointer;
+}
+button:hover{background:#0353e9;}
+.list-item{
+    display:flex;
+    justify-content:space-between;
+    background:#2a2a2a;
+    padding:10px;
+    margin-top:8px;
+    border-radius:8px;
+}
+.stats{
+    display:flex;
+    justify-content:space-between;
+    font-size:18px;
+    margin-top:10px;
+}
 </style>
 </head>
 <body>
+<div class="container">
+<h1>💈 Berber Kasa & Randevu Sistemi</h1>
 
-<h1>💈 Berber POS Sistemi</h1>
-
-<div class="nav">
-<button onclick="show('dashboard')">Dashboard</button>
-<button onclick="show('appointments')">Randevular</button>
-<button onclick="show('sales')">Satış</button>
-<button onclick="show('staff')">Personel</button>
+<div class="card">
+<h2>Hizmet Ekle</h2>
+<input id="serviceName" placeholder="Hizmet adı (Saç, Sakal)">
+<input id="servicePrice" type="number" placeholder="Fiyat">
+<button onclick="addService()">Hizmet Ekle</button>
 </div>
 
-<!-- DASHBOARD -->
-<div id="dashboard">
-<h2>📊 Günlük Özet</h2>
-<p id="totalCustomers"></p>
-<p id="totalRevenue"></p>
-<p id="cashTotal"></p>
-<p id="cardTotal"></p>
-</div>
-
-<!-- APPOINTMENTS -->
-<div id="appointments" class="hidden">
-<h2>📅 Randevu Ekle</h2>
-<input id="a_name" placeholder="Müşteri">
-<input id="a_staff" placeholder="Personel">
-<input id="a_time" placeholder="Saat (10:30)">
-<button onclick="addAppointment()">Kaydet</button>
-
-<table>
-<thead><tr><th>Müşteri</th><th>Personel</th><th>Saat</th></tr></thead>
-<tbody id="appointmentList"></tbody>
-</table>
-</div>
-
-<!-- SALES -->
-<div id="sales" class="hidden">
-<h2>💳 Satış Ekle</h2>
-<input id="s_customer" placeholder="Müşteri">
-<input id="s_service" placeholder="İşlem">
-<input id="s_staff" placeholder="Personel">
-<input id="s_amount" placeholder="Tutar">
-<select id="s_payment">
-<option>Nakit</option>
-<option>Kart</option>
+<div class="card">
+<h2>Müşteri İşlem</h2>
+<select id="serviceSelect"></select>
+<select id="staffSelect">
+<option>Personel 1</option>
+<option>Personel 2</option>
+<option>Personel 3</option>
 </select>
-<button onclick="addSale()">Satışı Kaydet</button>
-
-<table>
-<thead><tr><th>Müşteri</th><th>İşlem</th><th>Personel</th><th>Tutar</th></tr></thead>
-<tbody id="salesList"></tbody>
-</table>
+<button onclick="addSale()">Satış Ekle</button>
 </div>
 
-<!-- STAFF -->
-<div id="staff" class="hidden">
-<h2>👨‍🔧 Personel Performans</h2>
-<table>
-<thead><tr><th>Personel</th><th>Müşteri</th><th>Ciro</th></tr></thead>
-<tbody id="staffList"></tbody>
-</table>
+<div class="card">
+<h2>Bugünkü İşlemler</h2>
+<div id="salesList"></div>
+</div>
+
+<div class="card">
+<h2>Günlük İstatistik</h2>
+<div class="stats">
+<div>👥 Müşteri: <span id="totalCustomers">0</span></div>
+<div>💰 Ciro: <span id="totalRevenue">0</span> ₺</div>
+</div>
+</div>
+
+<div class="card">
+<h2>Personel Kazanç</h2>
+<div id="staffReport"></div>
+</div>
 </div>
 
 <script>
-function show(id){
- document.querySelectorAll("div[id]").forEach(d=>d.classList.add("hidden"));
- document.getElementById(id).classList.remove("hidden");
- loadAll();
+let services = JSON.parse(localStorage.getItem("services")) || [];
+let sales = JSON.parse(localStorage.getItem("sales")) || [];
+
+function saveData(){
+    localStorage.setItem("services",JSON.stringify(services));
+    localStorage.setItem("sales",JSON.stringify(sales));
 }
 
-function getData(key){return JSON.parse(localStorage.getItem(key)||"[]")}
-function setData(key,data){localStorage.setItem(key,JSON.stringify(data))}
-
-/* APPOINTMENTS */
-function addAppointment(){
- let data=getData("appointments");
- data.push({
-  name:a_name.value,
-  staff:a_staff.value,
-  time:a_time.value
- });
- setData("appointments",data);
- loadAppointments();
+function addService(){
+    let name=document.getElementById("serviceName").value;
+    let price=parseFloat(document.getElementById("servicePrice").value);
+    if(!name || !price) return alert("Bilgi gir!");
+    services.push({name,price});
+    saveData();
+    renderServices();
+    document.getElementById("serviceName").value="";
+    document.getElementById("servicePrice").value="";
 }
 
-function loadAppointments(){
- let data=getData("appointments");
- appointmentList.innerHTML="";
- data.forEach(a=>{
-  appointmentList.innerHTML+=`<tr><td>${a.name}</td><td>${a.staff}</td><td>${a.time}</td></tr>`;
- });
+function renderServices(){
+    let select=document.getElementById("serviceSelect");
+    select.innerHTML="";
+    services.forEach((s,i)=>{
+        let opt=document.createElement("option");
+        opt.value=i;
+        opt.text=s.name+" - "+s.price+"₺";
+        select.appendChild(opt);
+    });
 }
 
-/* SALES */
 function addSale(){
- let data=getData("sales");
- data.push({
-  customer:s_customer.value,
-  service:s_service.value,
-  staff:s_staff.value,
-  amount:Number(s_amount.value),
-  payment:s_payment.value
- });
- setData("sales",data);
- loadSales();
+    if(services.length==0) return alert("Önce hizmet ekle");
+    let serviceIndex=document.getElementById("serviceSelect").value;
+    let staff=document.getElementById("staffSelect").value;
+    let service=services[serviceIndex];
+    sales.push({
+        name:service.name,
+        price:service.price,
+        staff:staff,
+        date:new Date().toLocaleTimeString()
+    });
+    saveData();
+    renderSales();
 }
 
-function loadSales(){
- let data=getData("sales");
- salesList.innerHTML="";
- data.forEach(s=>{
-  salesList.innerHTML+=`<tr><td>${s.customer}</td><td>${s.service}</td><td>${s.staff}</td><td>₺${s.amount}</td></tr>`;
- });
+function renderSales(){
+    let list=document.getElementById("salesList");
+    list.innerHTML="";
+    let total=0;
+    sales.forEach(s=>{
+        total+=s.price;
+        let div=document.createElement("div");
+        div.className="list-item";
+        div.innerHTML=`${s.name} - ${s.price}₺ <span>${s.staff}</span>`;
+        list.appendChild(div);
+    });
+    document.getElementById("totalCustomers").innerText=sales.length;
+    document.getElementById("totalRevenue").innerText=total;
+    renderStaffReport();
 }
 
-/* STAFF */
-function loadStaff(){
- let sales=getData("sales");
- let map={};
- sales.forEach(s=>{
-  if(!map[s.staff]) map[s.staff]={count:0,total:0};
-  map[s.staff].count++;
-  map[s.staff].total+=s.amount;
- });
- staffList.innerHTML="";
- Object.keys(map).forEach(p=>{
-  staffList.innerHTML+=`<tr><td>${p}</td><td>${map[p].count}</td><td>₺${map[p].total}</td></tr>`;
- });
+function renderStaffReport(){
+    let report={};
+    sales.forEach(s=>{
+        if(!report[s.staff]) report[s.staff]=0;
+        report[s.staff]+=s.price;
+    });
+    let area=document.getElementById("staffReport");
+    area.innerHTML="";
+    for(let staff in report){
+        area.innerHTML+=`<div class="list-item">${staff} <b>${report[staff]}₺</b></div>`;
+    }
 }
 
-/* DASHBOARD */
-function loadDashboard(){
- let sales=getData("sales");
- totalCustomers.innerText="Toplam Müşteri: "+sales.length;
- totalRevenue.innerText="Toplam Ciro: ₺"+sales.reduce((a,b)=>a+b.amount,0);
- cashTotal.innerText="Nakit: ₺"+sales.filter(s=>s.payment==="Nakit").reduce((a,b)=>a+b.amount,0);
- cardTotal.innerText="Kart: ₺"+sales.filter(s=>s.payment==="Kart").reduce((a,b)=>a+b.amount,0);
-}
-
-function loadAll(){
- loadAppointments();
- loadSales();
- loadStaff();
- loadDashboard();
-}
-
-loadAll();
+renderServices();
+renderSales();
 </script>
 </body>
 </html>
