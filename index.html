@@ -1,196 +1,163 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Berber Pro Kasa</title>
+<meta charset="UTF-8">
+<title>Berber Kasa Sistemi</title>
 <style>
-:root{
-  --bg:#0b0b0c;
-  --card:#151518;
-  --accent:#d4af37;
-  --text:#f5f5f7;
-  --muted:#9b9ba1;
-  --danger:#ff4d4f;
-}
-*{box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto}
-body{margin:0;background:var(--bg);color:var(--text);}
-h2{margin:0 0 10px;font-size:18px;color:var(--accent)}
-.dashboard{
-  display:flex;gap:14px;overflow-x:auto;padding:16px;
-}
-.card{
-  min-width:300px;background:var(--card);
-  border-radius:16px;padding:16px;
-  box-shadow:0 0 0 1px rgba(255,255,255,0.03);
-}
-.stat{font-size:22px;font-weight:600;margin:6px 0}
-.muted{color:var(--muted);font-size:13px}
-.btn{
-  background:var(--accent);color:#000;border:none;
-  padding:12px;border-radius:12px;margin:6px 0;
-  width:100%;font-weight:600;
-}
-.btn2{
-  background:#222;border:1px solid #333;color:var(--text);
-}
-.input, select{
-  width:100%;padding:10px;margin:6px 0;border-radius:10px;
-  border:1px solid #2a2a2e;background:#0e0e11;color:#fff;
-}
-.row{display:flex;gap:8px}
-.small{font-size:12px;color:var(--muted)}
-.employee{
-  display:flex;justify-content:space-between;
-  padding:8px 0;border-bottom:1px solid #222;
-}
-.del{color:var(--danger);cursor:pointer}
+body{font-family:Arial;background:#111;color:#fff;text-align:center}
+button,input,select{padding:10px;margin:5px;font-size:16px}
+table{margin:auto;border-collapse:collapse;width:90%}
+td,th{border:1px solid #555;padding:8px}
+.nav button{font-size:18px}
+.hidden{display:none}
 </style>
 </head>
 <body>
 
-<div class="dashboard">
+<h1>💈 Berber POS Sistemi</h1>
 
-  <!-- KASA ÖZET -->
-  <div class="card">
-    <h2>💼 Kasa Özeti</h2>
-    <div class="small">Bugün Ciro</div>
-    <div id="total" class="stat">0 ₺</div>
-    <div class="small">Nakit</div>
-    <div id="cash" class="stat">0 ₺</div>
-    <div class="small">Kart</div>
-    <div id="card" class="stat">0 ₺</div>
-    <div class="small">KDV</div>
-    <div id="vat" class="stat">0 ₺</div>
-    <div class="small">Net Kazanç</div>
-    <div id="net" class="stat">0 ₺</div>
-  </div>
+<div class="nav">
+<button onclick="show('dashboard')">Dashboard</button>
+<button onclick="show('appointments')">Randevular</button>
+<button onclick="show('sales')">Satış</button>
+<button onclick="show('staff')">Personel</button>
+</div>
 
-  <!-- HIZLI İŞLEM -->
-  <div class="card">
-    <h2>💈 Hızlı İşlem</h2>
-    <div id="services"></div>
-    <select id="employeeSelect"></select>
-    <select id="payType" class="input">
-      <option value="cash">Nakit</option>
-      <option value="card">Kart</option>
-    </select>
-  </div>
+<!-- DASHBOARD -->
+<div id="dashboard">
+<h2>📊 Günlük Özet</h2>
+<p id="totalCustomers"></p>
+<p id="totalRevenue"></p>
+<p id="cashTotal"></p>
+<p id="cardTotal"></p>
+</div>
 
-  <!-- ELEMAN PANEL -->
-  <div class="card">
-    <h2>👨‍🔧 Elemanlar</h2>
-    <div id="employeeList"></div>
-    <input id="newEmp" class="input" placeholder="Yeni eleman adı"/>
-    <button class="btn" onclick="addEmployee()">Eleman Ekle</button>
-  </div>
+<!-- APPOINTMENTS -->
+<div id="appointments" class="hidden">
+<h2>📅 Randevu Ekle</h2>
+<input id="a_name" placeholder="Müşteri">
+<input id="a_staff" placeholder="Personel">
+<input id="a_time" placeholder="Saat (10:30)">
+<button onclick="addAppointment()">Kaydet</button>
 
-  <!-- AYARLAR -->
-  <div class="card">
-    <h2>⚙️ Ayarlar</h2>
-    <label class="small">KDV (%)</label>
-    <input id="vatRate" type="number" class="input" />
-    <label class="small">Komisyon (%)</label>
-    <input id="comRate" type="number" class="input" />
-    <h3 class="small">Hizmetler</h3>
-    <div id="serviceList"></div>
-    <input id="srvName" class="input" placeholder="Hizmet adı"/>
-    <input id="srvPrice" type="number" class="input" placeholder="Fiyat"/>
-    <button class="btn" onclick="addService()">Hizmet Ekle</button>
-  </div>
+<table>
+<thead><tr><th>Müşteri</th><th>Personel</th><th>Saat</th></tr></thead>
+<tbody id="appointmentList"></tbody>
+</table>
+</div>
 
+<!-- SALES -->
+<div id="sales" class="hidden">
+<h2>💳 Satış Ekle</h2>
+<input id="s_customer" placeholder="Müşteri">
+<input id="s_service" placeholder="İşlem">
+<input id="s_staff" placeholder="Personel">
+<input id="s_amount" placeholder="Tutar">
+<select id="s_payment">
+<option>Nakit</option>
+<option>Kart</option>
+</select>
+<button onclick="addSale()">Satışı Kaydet</button>
+
+<table>
+<thead><tr><th>Müşteri</th><th>İşlem</th><th>Personel</th><th>Tutar</th></tr></thead>
+<tbody id="salesList"></tbody>
+</table>
+</div>
+
+<!-- STAFF -->
+<div id="staff" class="hidden">
+<h2>👨‍🔧 Personel Performans</h2>
+<table>
+<thead><tr><th>Personel</th><th>Müşteri</th><th>Ciro</th></tr></thead>
+<tbody id="staffList"></tbody>
+</table>
 </div>
 
 <script>
-let data = JSON.parse(localStorage.getItem("kasaData")) || {
-  vat:20, com:50,
-  services:[
-    {name:"Saç",price:500},
-    {name:"Saç + Sakal",price:700},
-    {name:"Sakal",price:250}
-  ],
-  employees:["Ali","Mehmet"],
-  logs:[]
-};
-
-function save(){localStorage.setItem("kasaData",JSON.stringify(data));render();}
-
-function addLog(price,emp,type){
-  data.logs.push({price,emp,type,date:new Date().toDateString()});
-  save();
+function show(id){
+ document.querySelectorAll("div[id]").forEach(d=>d.classList.add("hidden"));
+ document.getElementById(id).classList.remove("hidden");
+ loadAll();
 }
 
-function calc(){
-  let today = new Date().toDateString();
-  let logs=data.logs.filter(l=>l.date===today);
-  let total=logs.reduce((a,b)=>a+b.price,0);
-  let cash=logs.filter(l=>l.type==="cash").reduce((a,b)=>a+b.price,0);
-  let card=logs.filter(l=>l.type==="card").reduce((a,b)=>a+b.price,0);
-  let vat=total*data.vat/100;
-  let net=total-vat;
-  return{total,cash,card,vat,net};
+function getData(key){return JSON.parse(localStorage.getItem(key)||"[]")}
+function setData(key,data){localStorage.setItem(key,JSON.stringify(data))}
+
+/* APPOINTMENTS */
+function addAppointment(){
+ let data=getData("appointments");
+ data.push({
+  name:a_name.value,
+  staff:a_staff.value,
+  time:a_time.value
+ });
+ setData("appointments",data);
+ loadAppointments();
 }
 
-function render(){
-  let c=calc();
-  total.textContent=c.total+" ₺";
-  cash.textContent=c.cash+" ₺";
-  card.textContent=c.card+" ₺";
-  vat.textContent=c.vat.toFixed(0)+" ₺";
-  net.textContent=c.net.toFixed(0)+" ₺";
-
-  // services buttons
-  services.innerHTML="";
-  data.services.forEach(s=>{
-    let b=document.createElement("button");
-    b.className="btn";
-    b.textContent=s.name+" - "+s.price+"₺";
-    b.onclick=()=>addLog(s.price,employeeSelect.value,payType.value);
-    services.appendChild(b);
-  });
-
-  // employee select & list
-  employeeSelect.innerHTML="";
-  employeeList.innerHTML="";
-  data.employees.forEach((e,i)=>{
-    let opt=document.createElement("option");
-    opt.value=e;opt.textContent=e;
-    employeeSelect.appendChild(opt);
-
-    let div=document.createElement("div");
-    div.className="employee";
-    div.innerHTML=`${e} <span class="del" onclick="delEmp(${i})">❌</span>`;
-    employeeList.appendChild(div);
-  });
-
-  // settings
-  vatRate.value=data.vat;
-  comRate.value=data.com;
-
-  // service list
-  serviceList.innerHTML="";
-  data.services.forEach((s,i)=>{
-    serviceList.innerHTML+=`<div class="employee">${s.name} - ${s.price}₺ <span class="del" onclick="delService(${i})">❌</span></div>`;
-  });
+function loadAppointments(){
+ let data=getData("appointments");
+ appointmentList.innerHTML="";
+ data.forEach(a=>{
+  appointmentList.innerHTML+=`<tr><td>${a.name}</td><td>${a.staff}</td><td>${a.time}</td></tr>`;
+ });
 }
 
-function addEmployee(){
-  let n=newEmp.value.trim();
-  if(n){data.employees.push(n);newEmp.value="";save();}
+/* SALES */
+function addSale(){
+ let data=getData("sales");
+ data.push({
+  customer:s_customer.value,
+  service:s_service.value,
+  staff:s_staff.value,
+  amount:Number(s_amount.value),
+  payment:s_payment.value
+ });
+ setData("sales",data);
+ loadSales();
 }
-function delEmp(i){data.employees.splice(i,1);save();}
 
-function addService(){
-  let n=srvName.value.trim();
-  let p=parseInt(srvPrice.value);
-  if(n&&p){data.services.push({name:n,price:p});srvName.value="";srvPrice.value="";save();}
+function loadSales(){
+ let data=getData("sales");
+ salesList.innerHTML="";
+ data.forEach(s=>{
+  salesList.innerHTML+=`<tr><td>${s.customer}</td><td>${s.service}</td><td>${s.staff}</td><td>₺${s.amount}</td></tr>`;
+ });
 }
-function delService(i){data.services.splice(i,1);save();}
 
-vatRate.onchange=()=>{data.vat=parseInt(vatRate.value)||0;save();}
-comRate.onchange=()=>{data.com=parseInt(comRate.value)||0;save();}
+/* STAFF */
+function loadStaff(){
+ let sales=getData("sales");
+ let map={};
+ sales.forEach(s=>{
+  if(!map[s.staff]) map[s.staff]={count:0,total:0};
+  map[s.staff].count++;
+  map[s.staff].total+=s.amount;
+ });
+ staffList.innerHTML="";
+ Object.keys(map).forEach(p=>{
+  staffList.innerHTML+=`<tr><td>${p}</td><td>${map[p].count}</td><td>₺${map[p].total}</td></tr>`;
+ });
+}
 
-render();
+/* DASHBOARD */
+function loadDashboard(){
+ let sales=getData("sales");
+ totalCustomers.innerText="Toplam Müşteri: "+sales.length;
+ totalRevenue.innerText="Toplam Ciro: ₺"+sales.reduce((a,b)=>a+b.amount,0);
+ cashTotal.innerText="Nakit: ₺"+sales.filter(s=>s.payment==="Nakit").reduce((a,b)=>a+b.amount,0);
+ cardTotal.innerText="Kart: ₺"+sales.filter(s=>s.payment==="Kart").reduce((a,b)=>a+b.amount,0);
+}
+
+function loadAll(){
+ loadAppointments();
+ loadSales();
+ loadStaff();
+ loadDashboard();
+}
+
+loadAll();
 </script>
 </body>
 </html>
