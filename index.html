@@ -3,171 +3,165 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Berber Kasa Sistemi</title>
+<title>Berber Yönetim Paneli</title>
+
 <style>
-body{
-    font-family: Arial, sans-serif;
-    background:#111;
-    color:#fff;
-    margin:0;
-    padding:20px;
+body {
+  font-family: Arial, sans-serif;
+  background:#0f0f0f;
+  color:white;
+  padding:15px;
 }
-.container{max-width:900px;margin:auto;}
-h1{text-align:center;}
-.card{
-    background:#1e1e1e;
-    padding:20px;
-    margin-bottom:20px;
-    border-radius:12px;
+h1 { color:gold; text-align:center; }
+section {
+  background:#1c1c1c;
+  padding:15px;
+  margin-top:15px;
+  border-radius:12px;
 }
-input,select,button{
-    width:100%;
-    padding:12px;
-    margin-top:10px;
-    border-radius:8px;
-    border:none;
+select, button, input {
+  width:100%;
+  padding:12px;
+  margin-top:8px;
+  border-radius:8px;
+  border:none;
+  font-size:16px;
 }
-button{
-    background:#0f62fe;
-    color:#fff;
-    font-weight:bold;
-    cursor:pointer;
+button {
+  background:gold;
+  font-weight:bold;
 }
-button:hover{background:#0353e9;}
-.list-item{
-    display:flex;
-    justify-content:space-between;
-    background:#2a2a2a;
-    padding:10px;
-    margin-top:8px;
-    border-radius:8px;
+ul { list-style:none; padding:0; }
+li {
+  background:#2a2a2a;
+  margin-top:6px;
+  padding:10px;
+  border-radius:8px;
 }
-.stats{
-    display:flex;
-    justify-content:space-between;
-    font-size:18px;
-    margin-top:10px;
-}
+.kirmizi { color:#ff5252; }
+.yesil { color:#4caf50; }
 </style>
 </head>
+
 <body>
-<div class="container">
-<h1>💈 Berber Kasa & Randevu Sistemi</h1>
 
-<div class="card">
-<h2>Hizmet Ekle</h2>
-<input id="serviceName" placeholder="Hizmet adı (Saç, Sakal)">
-<input id="servicePrice" type="number" placeholder="Fiyat">
-<button onclick="addService()">Hizmet Ekle</button>
-</div>
+<h1>💈 Berber Kasa Paneli</h1>
 
-<div class="card">
-<h2>Müşteri İşlem</h2>
-<select id="serviceSelect"></select>
-<select id="staffSelect">
-<option>Personel 1</option>
-<option>Personel 2</option>
-<option>Personel 3</option>
+<section>
+<h2>İşlem Ekle</h2>
+
+<select id="personel">
+  <option>Ahmet</option>
+  <option>Mehmet</option>
+  <option>Ali</option>
 </select>
-<button onclick="addSale()">Satış Ekle</button>
-</div>
 
-<div class="card">
-<h2>Bugünkü İşlemler</h2>
-<div id="salesList"></div>
-</div>
+<select id="islem">
+  <option value="sac">Saç</option>
+  <option value="sakal">Sakal</option>
+  <option value="cocuk">Çocuk</option>
+</select>
 
-<div class="card">
-<h2>Günlük İstatistik</h2>
-<div class="stats">
-<div>👥 Müşteri: <span id="totalCustomers">0</span></div>
-<div>💰 Ciro: <span id="totalRevenue">0</span> ₺</div>
-</div>
-</div>
+<button onclick="islemEkle()">İşlem Kaydet</button>
+</section>
 
-<div class="card">
-<h2>Personel Kazanç</h2>
-<div id="staffReport"></div>
-</div>
-</div>
+<section>
+<h2>Fiyat Ayarları</h2>
+<label>Saç Fiyatı</label>
+<input type="number" id="fiyatSac">
+
+<label>Sakal Fiyatı</label>
+<input type="number" id="fiyatSakal">
+
+<label>Çocuk Fiyatı</label>
+<input type="number" id="fiyatCocuk">
+
+<button onclick="fiyatKaydet()">Fiyatları Güncelle</button>
+</section>
+
+<section>
+<h2>Günlük Kasa</h2>
+<ul id="kasaListesi"></ul>
+<h3 id="toplam">Toplam: 0 TL</h3>
+</section>
+
+<section>
+<h2>Aylık Hesap</h2>
+<label>Aylık Gider (TL)</label>
+<input type="number" id="gider" value="40000">
+
+<button onclick="karHesapla()">Kâr Hesapla</button>
+<h3 id="karSonuc"></h3>
+</section>
 
 <script>
-let services = JSON.parse(localStorage.getItem("services")) || [];
-let sales = JSON.parse(localStorage.getItem("sales")) || [];
+let kasa = JSON.parse(localStorage.getItem("kasa")) || [];
 
-function saveData(){
-    localStorage.setItem("services",JSON.stringify(services));
-    localStorage.setItem("sales",JSON.stringify(sales));
+let fiyatlar = JSON.parse(localStorage.getItem("fiyatlar")) || {
+  sac:250,
+  sakal:100,
+  cocuk:200
+};
+
+function fiyatInputGuncelle(){
+  document.getElementById("fiyatSac").value = fiyatlar.sac;
+  document.getElementById("fiyatSakal").value = fiyatlar.sakal;
+  document.getElementById("fiyatCocuk").value = fiyatlar.cocuk;
 }
 
-function addService(){
-    let name=document.getElementById("serviceName").value;
-    let price=parseFloat(document.getElementById("servicePrice").value);
-    if(!name || !price) return alert("Bilgi gir!");
-    services.push({name,price});
-    saveData();
-    renderServices();
-    document.getElementById("serviceName").value="";
-    document.getElementById("servicePrice").value="";
+function fiyatKaydet(){
+  fiyatlar.sac = Number(document.getElementById("fiyatSac").value);
+  fiyatlar.sakal = Number(document.getElementById("fiyatSakal").value);
+  fiyatlar.cocuk = Number(document.getElementById("fiyatCocuk").value);
+
+  localStorage.setItem("fiyatlar", JSON.stringify(fiyatlar));
+  alert("Fiyatlar güncellendi");
 }
 
-function renderServices(){
-    let select=document.getElementById("serviceSelect");
-    select.innerHTML="";
-    services.forEach((s,i)=>{
-        let opt=document.createElement("option");
-        opt.value=i;
-        opt.text=s.name+" - "+s.price+"₺";
-        select.appendChild(opt);
-    });
+function islemEkle(){
+  let personel = document.getElementById("personel").value;
+  let islem = document.getElementById("islem").value;
+  let tutar = fiyatlar[islem];
+
+  kasa.push({ personel, islem, tutar, tarih:new Date().toLocaleDateString() });
+  localStorage.setItem("kasa", JSON.stringify(kasa));
+  listeGuncelle();
 }
 
-function addSale(){
-    if(services.length==0) return alert("Önce hizmet ekle");
-    let serviceIndex=document.getElementById("serviceSelect").value;
-    let staff=document.getElementById("staffSelect").value;
-    let service=services[serviceIndex];
-    sales.push({
-        name:service.name,
-        price:service.price,
-        staff:staff,
-        date:new Date().toLocaleTimeString()
-    });
-    saveData();
-    renderSales();
+function listeGuncelle(){
+  let liste = document.getElementById("kasaListesi");
+  liste.innerHTML = "";
+  let toplam = 0;
+
+  kasa.forEach((k,i)=>{
+    let li = document.createElement("li");
+    li.innerHTML = `${k.tarih} - <b>${k.personel}</b> | ${k.islem} : ${k.tutar} TL 
+    <button onclick="sil(${i})" style="background:#ff5252;margin-top:5px;">Sil</button>`;
+    liste.appendChild(li);
+    toplam += k.tutar;
+  });
+
+  document.getElementById("toplam").textContent = "Toplam: " + toplam + " TL";
 }
 
-function renderSales(){
-    let list=document.getElementById("salesList");
-    list.innerHTML="";
-    let total=0;
-    sales.forEach(s=>{
-        total+=s.price;
-        let div=document.createElement("div");
-        div.className="list-item";
-        div.innerHTML=`${s.name} - ${s.price}₺ <span>${s.staff}</span>`;
-        list.appendChild(div);
-    });
-    document.getElementById("totalCustomers").innerText=sales.length;
-    document.getElementById("totalRevenue").innerText=total;
-    renderStaffReport();
+function sil(index){
+  kasa.splice(index,1);
+  localStorage.setItem("kasa", JSON.stringify(kasa));
+  listeGuncelle();
 }
 
-function renderStaffReport(){
-    let report={};
-    sales.forEach(s=>{
-        if(!report[s.staff]) report[s.staff]=0;
-        report[s.staff]+=s.price;
-    });
-    let area=document.getElementById("staffReport");
-    area.innerHTML="";
-    for(let staff in report){
-        area.innerHTML+=`<div class="list-item">${staff} <b>${report[staff]}₺</b></div>`;
-    }
+function karHesapla(){
+  let toplam = kasa.reduce((t,k)=>t+k.tutar,0);
+  let gider = Number(document.getElementById("gider").value);
+  let kar = toplam - gider;
+
+  document.getElementById("karSonuc").innerHTML =
+    "Net Kâr: <span class='"+(kar>=0?"yesil":"kirmizi")+"'>"+kar+" TL</span>";
 }
 
-renderServices();
-renderSales();
+fiyatInputGuncelle();
+listeGuncelle();
 </script>
+
 </body>
 </html>
