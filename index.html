@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Berber Yönetim Paneli</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Profesyonel Salon Yönetimi</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
 body{margin:0;font-family:Poppins;background:#0f172a;color:#fff}
-header{background:#020617;padding:15px;font-size:22px;font-weight:700;text-align:center}
+header{background:#020617;padding:15px;text-align:center;font-size:22px;font-weight:700}
 nav{display:flex;background:#020617;border-top:1px solid #1e293b}
 nav button{flex:1;padding:14px;background:none;border:none;color:#94a3b8;font-weight:600}
 nav button.active{color:#22c55e;border-bottom:3px solid #22c55e}
@@ -16,93 +16,131 @@ nav button.active{color:#22c55e;border-bottom:3px solid #22c55e}
 input,select{width:100%;padding:10px;margin-top:8px;border-radius:8px;border:none;background:#334155;color:#fff}
 button.action{background:#22c55e;border:none;padding:10px;border-radius:8px;color:white;font-weight:600;margin-top:10px;width:100%}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
-.barber-card{background:#334155;border-radius:12px;padding:12px;text-align:center}
-.badge{background:#020617;padding:4px 8px;border-radius:6px;font-size:12px;margin-top:5px;display:inline-block}
-h2{margin-top:0}
+.item{background:#334155;border-radius:10px;padding:10px}
+.small{font-size:12px;color:#94a3b8}
 </style>
 </head>
 <body>
 
-<header>💈 Berber Yönetim Paneli</header>
+<header>💈 Profesyonel Salon Yönetim Paneli</header>
 
-<nav>
-<button onclick="showTab('dashboard')" id="tab-dashboard" class="active">Panel</button>
-<button onclick="showTab('barbers')" id="tab-barbers">Berberler</button>
-<button onclick="showTab('services')" id="tab-services">Hizmetler</button>
-<button onclick="showTab('reports')" id="tab-reports">Rapor</button>
+<div class="container" id="login"></div>
+
+<nav style="display:none" id="nav">
+<button onclick="tab('dashboard')" id="t-dashboard" class="active">Panel</button>
+<button onclick="tab('mypanel')" id="t-mypanel">Kendi Panelim</button>
+<button onclick="tab('barbers')" id="t-barbers">Berberler</button>
+<button onclick="tab('services')" id="t-services">Hizmetler</button>
+<button onclick="tab('reports')" id="t-reports">Rapor</button>
 </nav>
 
 <div class="container" id="app"></div>
 
 <script>
 let state={
-barbers:[
-{name:"Mehmet",percent:50},
-{name:"Ali",percent:60},
-{name:"Veli",percent:50}
+users:[
+{name:"Ahmet",role:"admin"},
+{name:"Mehmet",role:"barber",percent:50},
+{name:"Ali",role:"barber",percent:50}
 ],
 services:[
 {name:"Saç",price:200},
-{name:"Sakal",price:100},
-{name:"Saç+Sakal",price:300}
+{name:"Sakal",price:100}
 ],
-logs:[],
-expenses:[]
+logs:[]
 }
 
-function showTab(tab){
-document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"))
-document.getElementById("tab-"+tab).classList.add("active")
+let currentUser=null
 
-if(tab==="dashboard") renderDashboard()
-if(tab==="barbers") renderBarbers()
-if(tab==="services") renderServices()
-if(tab==="reports") renderReports()
+function renderLogin(){
+login.innerHTML=`
+<div class="card">
+<h2>Giriş</h2>
+<select id="userSel">
+${state.users.map(u=>`<option>${u.name}</option>`).join("")}
+</select>
+<button class="action" onclick="loginUser()">Giriş Yap</button>
+</div>`
+}
+renderLogin()
+
+function loginUser(){
+let name=document.getElementById("userSel").value
+currentUser=state.users.find(u=>u.name===name)
+login.style.display="none"
+nav.style.display="flex"
+tab("dashboard")
+}
+
+function tab(t){
+document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"))
+document.getElementById("t-"+t).classList.add("active")
+if(t==="dashboard") renderDashboard()
+if(t==="mypanel") renderMyPanel()
+if(t==="barbers") renderBarbers()
+if(t==="services") renderServices()
+if(t==="reports") renderReports()
 }
 
 function renderDashboard(){
 let total=state.logs.reduce((a,b)=>a+b.price,0)
-let barberPay=state.logs.reduce((a,b)=>a+b.barberEarn,0)
 let shop=state.logs.reduce((a,b)=>a+b.shopEarn,0)
-
 app.innerHTML=`
 <div class="card">
 <h2>Genel Durum</h2>
 <p>Toplam Ciro: ${total} ₺</p>
-<p>Berberlere Ödenen: ${barberPay} ₺</p>
 <p>Ortak Kasa: ${shop} ₺</p>
 </div>
 
 <div class="card">
-<h2>Hızlı İşlem</h2>
-<select id="barberSelect">
-${state.barbers.map(b=>`<option>${b.name}</option>`).join("")}
+<h2>İşlem Ekle</h2>
+<select id="barberSel">
+${state.users.map(u=>`<option>${u.name}</option>`).join("")}
 </select>
-
-<select id="serviceSelect">
+<select id="serviceSel">
 ${state.services.map(s=>`<option>${s.name}</option>`).join("")}
 </select>
-
-<input type="number" id="priceInput" placeholder="Fiyat (boş bırak otomatik)">
-<button class="action" onclick="addTransaction()">İşlem Kaydet</button>
-</div>
-`
+<input type="number" id="priceInp" placeholder="Fiyat (boş=otomatik)">
+<button class="action" onclick="addLog()">Kaydet</button>
+</div>`
 }
 
-function addTransaction(){
-let barberName=document.getElementById("barberSelect").value
-let serviceName=document.getElementById("serviceSelect").value
-let priceInput=document.getElementById("priceInput").value
-
+function addLog(){
+let barberName=barberSel.value
+let serviceName=serviceSel.value
+let priceInput=priceInp.value
 let service=state.services.find(s=>s.name===serviceName)
-let barber=state.barbers.find(b=>b.name===barberName)
-
+let barber=state.users.find(u=>u.name===barberName)
 let price=priceInput?Number(priceInput):service.price
-let barberEarn=price*(barber.percent/100)
-let shopEarn=price-barberEarn
 
-state.logs.push({barber:barberName,price,barberEarn,shopEarn})
-renderDashboard()
+let barberEarn=0, shopEarn=price
+if(barber.role==="barber"){
+barberEarn=price*(barber.percent/100)
+shopEarn=price-barberEarn
+}
+
+state.logs.push({barber:barberName,service:serviceName,price,barberEarn,shopEarn})
+tab("dashboard")
+}
+
+function renderMyPanel(){
+let myLogs=state.logs.filter(l=>l.barber===currentUser.name)
+let myEarn=myLogs.reduce((a,b)=>a+b.barberEarn,0)
+app.innerHTML=`
+<div class="card">
+<h2>${currentUser.name} Paneli</h2>
+<p>Toplam İş: ${myLogs.length}</p>
+<p>Kazancın: ${myEarn.toFixed(2)} ₺</p>
+</div>
+
+<div class="card">
+<h2>Yaptığım İşler</h2>
+${myLogs.map(l=>`
+<div class="item">
+${l.service} - ${l.price} ₺
+<div class="small">Kazanç: ${l.barberEarn.toFixed(2)} ₺</div>
+</div>`).join("")}
+</div>`
 }
 
 function renderBarbers(){
@@ -110,61 +148,77 @@ app.innerHTML=`
 <div class="card">
 <h2>Berberler</h2>
 <div class="grid">
-${state.barbers.map((b,i)=>`
-<div class="barber-card">
-<h3>${b.name}</h3>
-<div class="badge">%${b.percent}</div>
-<input type="number" value="${b.percent}" onchange="updatePercent(${i},this.value)">
+${state.users.map((u,i)=>`
+<div class="item">
+<b>${u.name}</b><br>
+${u.role==="barber"?`
+Yüzde: <input type="number" value="${u.percent}" onchange="state.users[${i}].percent=Number(this.value)">
+<button onclick="delBarber(${i})">Sil</button>
+`:`Admin`}
 </div>`).join("")}
 </div>
 </div>
 
 <div class="card">
-<h2>Yeni Berber Ekle</h2>
-<input id="newBarber" placeholder="Berber adı">
-<input id="newPercent" type="number" placeholder="Yüzde %">
+<h2>Berber Ekle</h2>
+<input id="newBarber" placeholder="İsim">
+<input id="newPercent" type="number" placeholder="Yüzde">
 <button class="action" onclick="addBarber()">Ekle</button>
-</div>
-`
-}
-
-function updatePercent(i,val){
-state.barbers[i].percent=Number(val)
+</div>`
 }
 
 function addBarber(){
-let name=document.getElementById("newBarber").value
-let percent=Number(document.getElementById("newPercent").value)
-state.barbers.push({name,percent})
+state.users.push({name:newBarber.value,role:"barber",percent:Number(newPercent.value)})
 renderBarbers()
+}
+
+function delBarber(i){
+if(state.users[i].role!=="admin"){
+state.users.splice(i,1)
+renderBarbers()
+}
 }
 
 function renderServices(){
 app.innerHTML=`
 <div class="card">
-<h2>Hizmet Fiyatları</h2>
+<h2>Hizmetler</h2>
 ${state.services.map((s,i)=>`
-<div class="card">
+<div class="item">
 <input value="${s.name}" onchange="state.services[${i}].name=this.value">
 <input type="number" value="${s.price}" onchange="state.services[${i}].price=Number(this.value)">
+<button onclick="delService(${i})">Sil</button>
 </div>`).join("")}
 </div>
-`
+
+<div class="card">
+<h2>Hizmet Ekle</h2>
+<input id="newService" placeholder="Hizmet adı">
+<input id="newPrice" type="number" placeholder="Fiyat">
+<button class="action" onclick="addService()">Ekle</button>
+</div>`
+}
+
+function addService(){
+state.services.push({name:newService.value,price:Number(newPrice.value)})
+renderServices()
+}
+
+function delService(i){
+state.services.splice(i,1)
+renderServices()
 }
 
 function renderReports(){
-let html=`<div class="card"><h2>Berber Kazançları</h2>`
-state.barbers.forEach(b=>{
-let total=state.logs.filter(l=>l.barber===b.name)
-.reduce((a,c)=>a+c.barberEarn,0)
-html+=`<p>${b.name}: ${total} ₺</p>`
+let html=`<div class="card"><h2>Berber Kazanç Raporu</h2>`
+state.users.forEach(u=>{
+let earn=state.logs.filter(l=>l.barber===u.name)
+.reduce((a,b)=>a+b.barberEarn,0)
+html+=`<p>${u.name}: ${earn.toFixed(2)} ₺</p>`
 })
 html+=`</div>`
 app.innerHTML=html
 }
-
-renderDashboard()
 </script>
-
 </body>
 </html>
