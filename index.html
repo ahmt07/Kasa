@@ -1,224 +1,245 @@
+<!-- ===============================
+AHMET TEKELI BARBER ERP SYSTEM
+Tek Parça Profesyonel Salon Yönetim Paneli
+================================ -->
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Profesyonel Salon Yönetimi</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Ahmet Tekeli Yönetim Paneli</title>
+
 <style>
-body{margin:0;font-family:Poppins;background:#0f172a;color:#fff}
-header{background:#020617;padding:15px;text-align:center;font-size:22px;font-weight:700}
-nav{display:flex;background:#020617;border-top:1px solid #1e293b}
-nav button{flex:1;padding:14px;background:none;border:none;color:#94a3b8;font-weight:600}
-nav button.active{color:#22c55e;border-bottom:3px solid #22c55e}
+body{font-family:Arial;margin:0;background:#0f172a;color:#fff}
+header{background:#020617;padding:15px;text-align:center;font-size:22px;font-weight:bold}
 .container{padding:15px}
-.card{background:#1e293b;border-radius:12px;padding:15px;margin-bottom:15px}
-input,select{width:100%;padding:10px;margin-top:8px;border-radius:8px;border:none;background:#334155;color:#fff}
-button.action{background:#22c55e;border:none;padding:10px;border-radius:8px;color:white;font-weight:600;margin-top:10px;width:100%}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
-.item{background:#334155;border-radius:10px;padding:10px}
+.card{background:#020617;border-radius:12px;padding:15px;margin:10px 0}
+button{padding:10px;border:none;border-radius:8px;background:#2563eb;color:white;margin:5px}
+input,select{padding:10px;border-radius:8px;border:none;width:100%;margin:5px 0}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.hidden{display:none}
 .small{font-size:12px;color:#94a3b8}
 </style>
 </head>
+
 <body>
 
-<header>💈 Profesyonel Salon Yönetim Paneli</header>
+<header>👑 Ahmet Tekeli Yönetim Paneli</header>
 
-<div class="container" id="login"></div>
+<div class="container">
 
-<nav style="display:none" id="nav">
-<button onclick="tab('dashboard')" id="t-dashboard" class="active">Panel</button>
-<button onclick="tab('mypanel')" id="t-mypanel">Kendi Panelim</button>
-<button onclick="tab('barbers')" id="t-barbers">Berberler</button>
-<button onclick="tab('services')" id="t-services">Hizmetler</button>
-<button onclick="tab('reports')" id="t-reports">Rapor</button>
-</nav>
+<!-- LOGIN -->
+<div id="loginPanel" class="card">
+<h3>Admin Giriş</h3>
+<input type="password" id="adminPass" placeholder="Şifre">
+<button onclick="loginAdmin()">Giriş Yap</button>
 
-<div class="container" id="app"></div>
+<h3>Berber Giriş</h3>
+<select id="barberSelect"></select>
+<button onclick="loginBarber()">Panele Gir</button>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="hidden">
+<div class="grid">
+<div class="card">💰 Günlük Kasa: <b id="dailyTotal">0</b>₺</div>
+<div class="card">📅 Bugün İşlem: <b id="txnCount">0</b></div>
+</div>
+<button onclick="showAdmin()">Admin Panel</button>
+<button onclick="showReports()">Raporlar</button>
+<button onclick="logout()">Çıkış</button>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="adminPanel" class="hidden card">
+<h3>Admin Paneli</h3>
+
+<h4>Berber Yönetimi</h4>
+<input id="newBarber" placeholder="Yeni Berber İsmi">
+<input id="newPercent" placeholder="Yüzde (%)">
+<button onclick="addBarber()">Berber Ekle</button>
+<div id="barberList"></div>
+
+<h4>Hizmet Yönetimi</h4>
+<input id="serviceName" placeholder="Hizmet Adı">
+<input id="servicePrice" placeholder="Fiyat">
+<button onclick="addService()">Hizmet Ekle</button>
+<div id="serviceList"></div>
+
+<h4>Gün Sonu</h4>
+<button onclick="closeDay()">Günü Kapat</button>
+</div>
+
+<!-- BERBER PANEL -->
+<div id="barberPanel" class="hidden card">
+<h3 id="barberTitle"></h3>
+<select id="serviceSelect"></select>
+<button onclick="addTransaction()">İşlem Ekle</button>
+<h4>Bugünkü İşler</h4>
+<div id="txnList"></div>
+</div>
+
+<!-- REPORT PANEL -->
+<div id="reportPanel" class="hidden card">
+<h3>Aylık Rapor</h3>
+<div id="monthlyReport"></div>
+</div>
+
+</div>
 
 <script>
-let state={
-users:[
-{name:"Ahmet",role:"admin"},
-{name:"Mehmet",role:"barber",percent:50},
-{name:"Ali",role:"barber",percent:50}
-],
-services:[
-{name:"Saç",price:200},
-{name:"Sakal",price:100}
-],
-logs:[]
+// VERİLER
+let adminPassword="1234";
+let currentUser=null;
+
+let barbers=[
+ {id:1,name:"Berber 1",percent:40},
+ {id:2,name:"Berber 2",percent:50},
+ {id:3,name:"Berber 3",percent:30}
+];
+
+let services=[
+ {id:1,name:"Saç Kesim",price:300},
+ {id:2,name:"Sakal",price:150}
+];
+
+let transactions=[];
+let dailyClosed=[];
+
+// LOGIN
+function loginAdmin(){
+ if(document.getElementById("adminPass").value===adminPassword){
+  currentUser="admin";
+  document.getElementById("loginPanel").classList.add("hidden");
+  document.getElementById("dashboard").classList.remove("hidden");
+  renderAll();
+ }else alert("Şifre yanlış");
 }
 
-let currentUser=null
-
-function renderLogin(){
-login.innerHTML=`
-<div class="card">
-<h2>Giriş</h2>
-<select id="userSel">
-${state.users.map(u=>`<option>${u.name}</option>`).join("")}
-</select>
-<button class="action" onclick="loginUser()">Giriş Yap</button>
-</div>`
-}
-renderLogin()
-
-function loginUser(){
-let name=document.getElementById("userSel").value
-currentUser=state.users.find(u=>u.name===name)
-login.style.display="none"
-nav.style.display="flex"
-tab("dashboard")
+function loginBarber(){
+ let id=document.getElementById("barberSelect").value;
+ currentUser=id;
+ document.getElementById("loginPanel").classList.add("hidden");
+ document.getElementById("barberPanel").classList.remove("hidden");
+ document.getElementById("barberTitle").innerText=barbers.find(b=>b.id==id).name;
+ renderServices();
+ renderTxns();
 }
 
-function tab(t){
-document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"))
-document.getElementById("t-"+t).classList.add("active")
-if(t==="dashboard") renderDashboard()
-if(t==="mypanel") renderMyPanel()
-if(t==="barbers") renderBarbers()
-if(t==="services") renderServices()
-if(t==="reports") renderReports()
-}
+function logout(){location.reload();}
 
-function renderDashboard(){
-let total=state.logs.reduce((a,b)=>a+b.price,0)
-let shop=state.logs.reduce((a,b)=>a+b.shopEarn,0)
-app.innerHTML=`
-<div class="card">
-<h2>Genel Durum</h2>
-<p>Toplam Ciro: ${total} ₺</p>
-<p>Ortak Kasa: ${shop} ₺</p>
-</div>
-
-<div class="card">
-<h2>İşlem Ekle</h2>
-<select id="barberSel">
-${state.users.map(u=>`<option>${u.name}</option>`).join("")}
-</select>
-<select id="serviceSel">
-${state.services.map(s=>`<option>${s.name}</option>`).join("")}
-</select>
-<input type="number" id="priceInp" placeholder="Fiyat (boş=otomatik)">
-<button class="action" onclick="addLog()">Kaydet</button>
-</div>`
-}
-
-function addLog(){
-let barberName=barberSel.value
-let serviceName=serviceSel.value
-let priceInput=priceInp.value
-let service=state.services.find(s=>s.name===serviceName)
-let barber=state.users.find(u=>u.name===barberName)
-let price=priceInput?Number(priceInput):service.price
-
-let barberEarn=0, shopEarn=price
-if(barber.role==="barber"){
-barberEarn=price*(barber.percent/100)
-shopEarn=price-barberEarn
-}
-
-state.logs.push({barber:barberName,service:serviceName,price,barberEarn,shopEarn})
-tab("dashboard")
-}
-
-function renderMyPanel(){
-let myLogs=state.logs.filter(l=>l.barber===currentUser.name)
-let myEarn=myLogs.reduce((a,b)=>a+b.barberEarn,0)
-app.innerHTML=`
-<div class="card">
-<h2>${currentUser.name} Paneli</h2>
-<p>Toplam İş: ${myLogs.length}</p>
-<p>Kazancın: ${myEarn.toFixed(2)} ₺</p>
-</div>
-
-<div class="card">
-<h2>Yaptığım İşler</h2>
-${myLogs.map(l=>`
-<div class="item">
-${l.service} - ${l.price} ₺
-<div class="small">Kazanç: ${l.barberEarn.toFixed(2)} ₺</div>
-</div>`).join("")}
-</div>`
-}
-
-function renderBarbers(){
-app.innerHTML=`
-<div class="card">
-<h2>Berberler</h2>
-<div class="grid">
-${state.users.map((u,i)=>`
-<div class="item">
-<b>${u.name}</b><br>
-${u.role==="barber"?`
-Yüzde: <input type="number" value="${u.percent}" onchange="state.users[${i}].percent=Number(this.value)">
-<button onclick="delBarber(${i})">Sil</button>
-`:`Admin`}
-</div>`).join("")}
-</div>
-</div>
-
-<div class="card">
-<h2>Berber Ekle</h2>
-<input id="newBarber" placeholder="İsim">
-<input id="newPercent" type="number" placeholder="Yüzde">
-<button class="action" onclick="addBarber()">Ekle</button>
-</div>`
+// ADMIN
+function showAdmin(){
+ document.getElementById("adminPanel").classList.toggle("hidden");
+ renderBarbers();
+ renderServices();
 }
 
 function addBarber(){
-state.users.push({name:newBarber.value,role:"barber",percent:Number(newPercent.value)})
-renderBarbers()
+ let name=document.getElementById("newBarber").value;
+ let percent=parseInt(document.getElementById("newPercent").value);
+ barbers.push({id:Date.now(),name,percent});
+ renderBarbers();
+ renderBarberSelect();
 }
 
-function delBarber(i){
-if(state.users[i].role!=="admin"){
-state.users.splice(i,1)
-renderBarbers()
-}
-}
-
-function renderServices(){
-app.innerHTML=`
-<div class="card">
-<h2>Hizmetler</h2>
-${state.services.map((s,i)=>`
-<div class="item">
-<input value="${s.name}" onchange="state.services[${i}].name=this.value">
-<input type="number" value="${s.price}" onchange="state.services[${i}].price=Number(this.value)">
-<button onclick="delService(${i})">Sil</button>
-</div>`).join("")}
-</div>
-
-<div class="card">
-<h2>Hizmet Ekle</h2>
-<input id="newService" placeholder="Hizmet adı">
-<input id="newPrice" type="number" placeholder="Fiyat">
-<button class="action" onclick="addService()">Ekle</button>
-</div>`
+function renderBarbers(){
+ let html="";
+ barbers.forEach(b=>{
+  html+=`<div class="small">${b.name} - %${b.percent}</div>`;
+ });
+ document.getElementById("barberList").innerHTML=html;
 }
 
 function addService(){
-state.services.push({name:newService.value,price:Number(newPrice.value)})
-renderServices()
+ services.push({
+  id:Date.now(),
+  name:serviceName.value,
+  price:parseInt(servicePrice.value)
+ });
+ renderServices();
 }
 
-function delService(i){
-state.services.splice(i,1)
-renderServices()
+function renderServices(){
+ let html="";
+ services.forEach(s=>{
+  html+=`<div class="small">${s.name} - ${s.price}₺</div>`;
+ });
+ document.getElementById("serviceList").innerHTML=html;
+
+ let select="";
+ services.forEach(s=>{
+  select+=`<option value="${s.id}">${s.name}</option>`;
+ });
+ document.getElementById("serviceSelect").innerHTML=select;
 }
 
-function renderReports(){
-let html=`<div class="card"><h2>Berber Kazanç Raporu</h2>`
-state.users.forEach(u=>{
-let earn=state.logs.filter(l=>l.barber===u.name)
-.reduce((a,b)=>a+b.barberEarn,0)
-html+=`<p>${u.name}: ${earn.toFixed(2)} ₺</p>`
-})
-html+=`</div>`
-app.innerHTML=html
+function renderBarberSelect(){
+ let html="";
+ barbers.forEach(b=>{
+  html+=`<option value="${b.id}">${b.name}</option>`;
+ });
+ document.getElementById("barberSelect").innerHTML=html;
 }
+
+// TRANSACTION
+function addTransaction(){
+ let serviceId=document.getElementById("serviceSelect").value;
+ let service=services.find(s=>s.id==serviceId);
+ transactions.push({
+  barberId:currentUser,
+  price:service.price,
+  date:new Date().toLocaleDateString()
+ });
+ renderTxns();
+ renderAll();
+}
+
+function renderTxns(){
+ let html="";
+ transactions.filter(t=>t.barberId==currentUser)
+ .forEach(t=> html+=`<div class="small">${t.price}₺</div>`);
+ document.getElementById("txnList").innerHTML=html;
+}
+
+// CLOSE DAY
+function closeDay(){
+ let report={date:new Date().toLocaleDateString(),barbers:[]};
+ barbers.forEach(b=>{
+  let total=transactions.filter(t=>t.barberId==b.id)
+  .reduce((a,c)=>a+c.price,0);
+  let earn=total*(b.percent/100);
+  report.barbers.push({name:b.name,total,earn});
+ });
+ dailyClosed.push(report);
+ alert("Gün kapatıldı");
+}
+
+// REPORT
+function showReports(){
+ document.getElementById("reportPanel").classList.toggle("hidden");
+ let html="";
+ dailyClosed.forEach(r=>{
+  html+=`<div class="card">${r.date}`;
+  r.barbers.forEach(b=>{
+   html+=`<div class="small">${b.name}: ${b.total}₺ / Kazanç: ${b.earn.toFixed(0)}₺</div>`;
+  });
+  html+="</div>";
+ });
+ document.getElementById("monthlyReport").innerHTML=html;
+}
+
+// RENDER
+function renderAll(){
+ let total=transactions.reduce((a,c)=>a+c.price,0);
+ document.getElementById("dailyTotal").innerText=total;
+ document.getElementById("txnCount").innerText=transactions.length;
+}
+
+renderBarberSelect();
+renderServices();
 </script>
+
 </body>
 </html>
