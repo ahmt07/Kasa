@@ -3,164 +3,195 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Berber Yönetim Paneli</title>
-
+<title>Berber Ortak Kasa PRO</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
-body {
-  font-family: Arial, sans-serif;
-  background:#0f0f0f;
-  color:white;
-  padding:15px;
-}
-h1 { color:gold; text-align:center; }
-section {
-  background:#1c1c1c;
-  padding:15px;
-  margin-top:15px;
-  border-radius:12px;
-}
-select, button, input {
-  width:100%;
-  padding:12px;
-  margin-top:8px;
-  border-radius:8px;
-  border:none;
-  font-size:16px;
-}
-button {
-  background:gold;
-  font-weight:bold;
-}
-ul { list-style:none; padding:0; }
-li {
-  background:#2a2a2a;
-  margin-top:6px;
-  padding:10px;
-  border-radius:8px;
-}
-.kirmizi { color:#ff5252; }
-.yesil { color:#4caf50; }
+body{font-family:Poppins;background:#0f172a;color:white;margin:0}
+header{background:#020617;padding:15px;text-align:center;font-size:22px;font-weight:700}
+.container{padding:15px}
+.card{background:#1e293b;border-radius:12px;padding:15px;margin-bottom:15px}
+button{background:#22c55e;border:none;padding:10px 15px;border-radius:8px;color:white;font-weight:600;margin-top:10px}
+input,select{width:100%;padding:10px;margin-top:5px;border-radius:8px;border:none;background:#334155;color:white}
+h2{margin-top:0}
+.small{font-size:13px;color:#94a3b8}
+.row{display:flex;gap:10px}
+.row>*{flex:1}
+.badge{background:#334155;padding:5px 10px;border-radius:6px;margin-left:5px;font-size:12px}
 </style>
 </head>
-
 <body>
 
-<h1>💈 Berber Kasa Paneli</h1>
-
-<section>
-<h2>İşlem Ekle</h2>
-
-<select id="personel">
-  <option>Ahmet</option>
-  <option>Mehmet</option>
-  <option>Ali</option>
-</select>
-
-<select id="islem">
-  <option value="sac">Saç</option>
-  <option value="sakal">Sakal</option>
-  <option value="cocuk">Çocuk</option>
-</select>
-
-<button onclick="islemEkle()">İşlem Kaydet</button>
-</section>
-
-<section>
-<h2>Fiyat Ayarları</h2>
-<label>Saç Fiyatı</label>
-<input type="number" id="fiyatSac">
-
-<label>Sakal Fiyatı</label>
-<input type="number" id="fiyatSakal">
-
-<label>Çocuk Fiyatı</label>
-<input type="number" id="fiyatCocuk">
-
-<button onclick="fiyatKaydet()">Fiyatları Güncelle</button>
-</section>
-
-<section>
-<h2>Günlük Kasa</h2>
-<ul id="kasaListesi"></ul>
-<h3 id="toplam">Toplam: 0 TL</h3>
-</section>
-
-<section>
-<h2>Aylık Hesap</h2>
-<label>Aylık Gider (TL)</label>
-<input type="number" id="gider" value="40000">
-
-<button onclick="karHesapla()">Kâr Hesapla</button>
-<h3 id="karSonuc"></h3>
-</section>
+<header>💈 Berber Ortak Kasa PRO</header>
+<div class="container" id="app"></div>
 
 <script>
-let kasa = JSON.parse(localStorage.getItem("kasa")) || [];
-
-let fiyatlar = JSON.parse(localStorage.getItem("fiyatlar")) || {
-  sac:250,
-  sakal:100,
-  cocuk:200
-};
-
-function fiyatInputGuncelle(){
-  document.getElementById("fiyatSac").value = fiyatlar.sac;
-  document.getElementById("fiyatSakal").value = fiyatlar.sakal;
-  document.getElementById("fiyatCocuk").value = fiyatlar.cocuk;
+let state={
+users:[
+{name:"Ahmet",role:"admin",percent:0},
+{name:"Mehmet",role:"barber",percent:50},
+{name:"Ali",role:"barber",percent:50},
+{name:"Veli",role:"barber",percent:50}
+],
+services:[
+{name:"Saç",price:200},
+{name:"Sakal",price:100},
+{name:"Saç+Sakal",price:300}
+],
+logs:[],
+expenses:[]
 }
 
-function fiyatKaydet(){
-  fiyatlar.sac = Number(document.getElementById("fiyatSac").value);
-  fiyatlar.sakal = Number(document.getElementById("fiyatSakal").value);
-  fiyatlar.cocuk = Number(document.getElementById("fiyatCocuk").value);
+let currentUser=null
 
-  localStorage.setItem("fiyatlar", JSON.stringify(fiyatlar));
-  alert("Fiyatlar güncellendi");
+function renderLogin(){
+app.innerHTML=`
+<div class="card">
+<h2>Giriş Yap</h2>
+<select id="userSelect">
+${state.users.map(u=>`<option>${u.name}</option>`).join("")}
+</select>
+<button onclick="login()">Giriş</button>
+</div>`
 }
 
-function islemEkle(){
-  let personel = document.getElementById("personel").value;
-  let islem = document.getElementById("islem").value;
-  let tutar = fiyatlar[islem];
-
-  kasa.push({ personel, islem, tutar, tarih:new Date().toLocaleDateString() });
-  localStorage.setItem("kasa", JSON.stringify(kasa));
-  listeGuncelle();
+function login(){
+let name=document.getElementById("userSelect").value
+currentUser=state.users.find(u=>u.name===name)
+renderDashboard()
 }
 
-function listeGuncelle(){
-  let liste = document.getElementById("kasaListesi");
-  liste.innerHTML = "";
-  let toplam = 0;
-
-  kasa.forEach((k,i)=>{
-    let li = document.createElement("li");
-    li.innerHTML = `${k.tarih} - <b>${k.personel}</b> | ${k.islem} : ${k.tutar} TL 
-    <button onclick="sil(${i})" style="background:#ff5252;margin-top:5px;">Sil</button>`;
-    liste.appendChild(li);
-    toplam += k.tutar;
-  });
-
-  document.getElementById("toplam").textContent = "Toplam: " + toplam + " TL";
+function renderDashboard(){
+if(currentUser.role==="admin") renderAdmin()
+else renderBarber()
 }
 
-function sil(index){
-  kasa.splice(index,1);
-  localStorage.setItem("kasa", JSON.stringify(kasa));
-  listeGuncelle();
+function renderBarber(){
+let myLogs=state.logs.filter(l=>l.user===currentUser.name)
+let myTotal=myLogs.reduce((a,b)=>a+b.barberEarn,0)
+
+app.innerHTML=`
+<div class="card">
+<h2>Hoşgeldin ${currentUser.name} <span class="badge">%${currentUser.percent}</span></h2>
+<p class="small">Yaptığın işlemi seç ve kaydet</p>
+<select id="service">
+${state.services.map(s=>`<option>${s.name}</option>`).join("")}
+</select>
+<input type="number" id="customPrice" placeholder="Fiyat (opsiyonel)">
+<button onclick="addLog()">İşlem Kaydet</button>
+</div>
+
+<div class="card">
+<h2>Bugünkü Net Kazancın</h2>
+<h1>${myTotal.toFixed(2)} ₺</h1>
+</div>
+`
 }
 
-function karHesapla(){
-  let toplam = kasa.reduce((t,k)=>t+k.tutar,0);
-  let gider = Number(document.getElementById("gider").value);
-  let kar = toplam - gider;
+function addLog(){
+let service=document.getElementById("service").value
+let priceInput=document.getElementById("customPrice").value
+let serviceData=state.services.find(s=>s.name===service)
+let price=priceInput?Number(priceInput):serviceData.price
 
-  document.getElementById("karSonuc").innerHTML =
-    "Net Kâr: <span class='"+(kar>=0?"yesil":"kirmizi")+"'>"+kar+" TL</span>";
+let percent=currentUser.percent
+let barberEarn=price*(percent/100)
+let shopEarn=price-barberEarn
+
+state.logs.push({
+user:currentUser.name,
+service,
+price,
+barberEarn,
+shopEarn,
+date:new Date().toLocaleDateString()
+})
+
+renderBarber()
 }
 
-fiyatInputGuncelle();
-listeGuncelle();
+function renderAdmin(){
+let total=state.logs.reduce((a,b)=>a+b.price,0)
+let barberTotal=state.logs.reduce((a,b)=>a+b.barberEarn,0)
+let shopTotal=state.logs.reduce((a,b)=>a+b.shopEarn,0)
+let expense=state.expenses.reduce((a,b)=>a+b.amount,0)
+let profit=shopTotal-expense
+
+app.innerHTML=`
+<div class="card">
+<h2>Genel Özet</h2>
+<p>Toplam Ciro: ${total.toFixed(2)} ₺</p>
+<p>Berberlere Ödenen: ${barberTotal.toFixed(2)} ₺</p>
+<p>Ortak Kasa: ${shopTotal.toFixed(2)} ₺</p>
+<p>Giderler: ${expense.toFixed(2)} ₺</p>
+<h3>Net Kâr: ${profit.toFixed(2)} ₺</h3>
+</div>
+
+<div class="card">
+<h2>Gider Ekle</h2>
+<input id="expenseName" placeholder="Gider adı">
+<input id="expenseAmount" type="number" placeholder="Tutar">
+<button onclick="addExpense()">Gider Kaydet</button>
+</div>
+
+<div class="card">
+<h2>Berber Yönetimi</h2>
+<input id="newBarber" placeholder="Yeni berber adı">
+<input id="newPercent" type="number" placeholder="Yüzde %">
+<button onclick="addBarber()">Berber Ekle</button>
+<ul>
+${state.users.map((u,i)=>`
+<li>
+${u.name} (${u.role}) 
+${u.role!=="admin"?`<span class="badge">%${u.percent}</span>
+<input type="number" value="${u.percent}" onchange="editPercent(${i},this.value)">
+<button onclick="removeBarber('${u.name}')">Sil</button>`:""}
+</li>`).join("")}
+</ul>
+</div>
+
+<div class="card">
+<h2>Fiyat Yönetimi</h2>
+${state.services.map((s,i)=>`
+<div class="row">
+<input value="${s.name}" onchange="editServiceName(${i},this.value)">
+<input type="number" value="${s.price}" onchange="editServicePrice(${i},this.value)">
+</div>`).join("")}
+</div>
+`
+}
+
+function addExpense(){
+let name=document.getElementById("expenseName").value
+let amount=Number(document.getElementById("expenseAmount").value)
+state.expenses.push({name,amount})
+renderAdmin()
+}
+
+function addBarber(){
+let name=document.getElementById("newBarber").value
+let percent=Number(document.getElementById("newPercent").value)
+state.users.push({name,role:"barber",percent})
+renderAdmin()
+}
+
+function removeBarber(name){
+state.users=state.users.filter(u=>u.name!==name)
+renderAdmin()
+}
+
+function editPercent(i,val){
+state.users[i].percent=Number(val)
+}
+
+function editServicePrice(i,val){
+state.services[i].price=Number(val)
+}
+
+function editServiceName(i,val){
+state.services[i].name=val
+}
+
+renderLogin()
 </script>
 
 </body>
