@@ -3,34 +3,43 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Berber Ortak Kasa PRO</title>
+<title>Berber Yönetim Paneli</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
-body{font-family:Poppins;background:#0f172a;color:white;margin:0}
-header{background:#020617;padding:15px;text-align:center;font-size:22px;font-weight:700}
+body{margin:0;font-family:Poppins;background:#0f172a;color:#fff}
+header{background:#020617;padding:15px;font-size:22px;font-weight:700;text-align:center}
+nav{display:flex;background:#020617;border-top:1px solid #1e293b}
+nav button{flex:1;padding:14px;background:none;border:none;color:#94a3b8;font-weight:600}
+nav button.active{color:#22c55e;border-bottom:3px solid #22c55e}
 .container{padding:15px}
 .card{background:#1e293b;border-radius:12px;padding:15px;margin-bottom:15px}
-button{background:#22c55e;border:none;padding:10px 15px;border-radius:8px;color:white;font-weight:600;margin-top:10px}
-input,select{width:100%;padding:10px;margin-top:5px;border-radius:8px;border:none;background:#334155;color:white}
+input,select{width:100%;padding:10px;margin-top:8px;border-radius:8px;border:none;background:#334155;color:#fff}
+button.action{background:#22c55e;border:none;padding:10px;border-radius:8px;color:white;font-weight:600;margin-top:10px;width:100%}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.barber-card{background:#334155;border-radius:12px;padding:12px;text-align:center}
+.badge{background:#020617;padding:4px 8px;border-radius:6px;font-size:12px;margin-top:5px;display:inline-block}
 h2{margin-top:0}
-.small{font-size:13px;color:#94a3b8}
-.row{display:flex;gap:10px}
-.row>*{flex:1}
-.badge{background:#334155;padding:5px 10px;border-radius:6px;margin-left:5px;font-size:12px}
 </style>
 </head>
 <body>
 
-<header>💈 Berber Ortak Kasa PRO</header>
+<header>💈 Berber Yönetim Paneli</header>
+
+<nav>
+<button onclick="showTab('dashboard')" id="tab-dashboard" class="active">Panel</button>
+<button onclick="showTab('barbers')" id="tab-barbers">Berberler</button>
+<button onclick="showTab('services')" id="tab-services">Hizmetler</button>
+<button onclick="showTab('reports')" id="tab-reports">Rapor</button>
+</nav>
+
 <div class="container" id="app"></div>
 
 <script>
 let state={
-users:[
-{name:"Ahmet",role:"admin",percent:0},
-{name:"Mehmet",role:"barber",percent:50},
-{name:"Ali",role:"barber",percent:50},
-{name:"Veli",role:"barber",percent:50}
+barbers:[
+{name:"Mehmet",percent:50},
+{name:"Ali",percent:60},
+{name:"Veli",percent:50}
 ],
 services:[
 {name:"Saç",price:200},
@@ -41,157 +50,120 @@ logs:[],
 expenses:[]
 }
 
-let currentUser=null
+function showTab(tab){
+document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"))
+document.getElementById("tab-"+tab).classList.add("active")
 
-function renderLogin(){
-app.innerHTML=`
-<div class="card">
-<h2>Giriş Yap</h2>
-<select id="userSelect">
-${state.users.map(u=>`<option>${u.name}</option>`).join("")}
-</select>
-<button onclick="login()">Giriş</button>
-</div>`
-}
-
-function login(){
-let name=document.getElementById("userSelect").value
-currentUser=state.users.find(u=>u.name===name)
-renderDashboard()
+if(tab==="dashboard") renderDashboard()
+if(tab==="barbers") renderBarbers()
+if(tab==="services") renderServices()
+if(tab==="reports") renderReports()
 }
 
 function renderDashboard(){
-if(currentUser.role==="admin") renderAdmin()
-else renderBarber()
-}
-
-function renderBarber(){
-let myLogs=state.logs.filter(l=>l.user===currentUser.name)
-let myTotal=myLogs.reduce((a,b)=>a+b.barberEarn,0)
+let total=state.logs.reduce((a,b)=>a+b.price,0)
+let barberPay=state.logs.reduce((a,b)=>a+b.barberEarn,0)
+let shop=state.logs.reduce((a,b)=>a+b.shopEarn,0)
 
 app.innerHTML=`
 <div class="card">
-<h2>Hoşgeldin ${currentUser.name} <span class="badge">%${currentUser.percent}</span></h2>
-<p class="small">Yaptığın işlemi seç ve kaydet</p>
-<select id="service">
+<h2>Genel Durum</h2>
+<p>Toplam Ciro: ${total} ₺</p>
+<p>Berberlere Ödenen: ${barberPay} ₺</p>
+<p>Ortak Kasa: ${shop} ₺</p>
+</div>
+
+<div class="card">
+<h2>Hızlı İşlem</h2>
+<select id="barberSelect">
+${state.barbers.map(b=>`<option>${b.name}</option>`).join("")}
+</select>
+
+<select id="serviceSelect">
 ${state.services.map(s=>`<option>${s.name}</option>`).join("")}
 </select>
-<input type="number" id="customPrice" placeholder="Fiyat (opsiyonel)">
-<button onclick="addLog()">İşlem Kaydet</button>
-</div>
 
-<div class="card">
-<h2>Bugünkü Net Kazancın</h2>
-<h1>${myTotal.toFixed(2)} ₺</h1>
+<input type="number" id="priceInput" placeholder="Fiyat (boş bırak otomatik)">
+<button class="action" onclick="addTransaction()">İşlem Kaydet</button>
 </div>
 `
 }
 
-function addLog(){
-let service=document.getElementById("service").value
-let priceInput=document.getElementById("customPrice").value
-let serviceData=state.services.find(s=>s.name===service)
-let price=priceInput?Number(priceInput):serviceData.price
+function addTransaction(){
+let barberName=document.getElementById("barberSelect").value
+let serviceName=document.getElementById("serviceSelect").value
+let priceInput=document.getElementById("priceInput").value
 
-let percent=currentUser.percent
-let barberEarn=price*(percent/100)
+let service=state.services.find(s=>s.name===serviceName)
+let barber=state.barbers.find(b=>b.name===barberName)
+
+let price=priceInput?Number(priceInput):service.price
+let barberEarn=price*(barber.percent/100)
 let shopEarn=price-barberEarn
 
-state.logs.push({
-user:currentUser.name,
-service,
-price,
-barberEarn,
-shopEarn,
-date:new Date().toLocaleDateString()
-})
-
-renderBarber()
+state.logs.push({barber:barberName,price,barberEarn,shopEarn})
+renderDashboard()
 }
 
-function renderAdmin(){
-let total=state.logs.reduce((a,b)=>a+b.price,0)
-let barberTotal=state.logs.reduce((a,b)=>a+b.barberEarn,0)
-let shopTotal=state.logs.reduce((a,b)=>a+b.shopEarn,0)
-let expense=state.expenses.reduce((a,b)=>a+b.amount,0)
-let profit=shopTotal-expense
-
+function renderBarbers(){
 app.innerHTML=`
 <div class="card">
-<h2>Genel Özet</h2>
-<p>Toplam Ciro: ${total.toFixed(2)} ₺</p>
-<p>Berberlere Ödenen: ${barberTotal.toFixed(2)} ₺</p>
-<p>Ortak Kasa: ${shopTotal.toFixed(2)} ₺</p>
-<p>Giderler: ${expense.toFixed(2)} ₺</p>
-<h3>Net Kâr: ${profit.toFixed(2)} ₺</h3>
-</div>
-
-<div class="card">
-<h2>Gider Ekle</h2>
-<input id="expenseName" placeholder="Gider adı">
-<input id="expenseAmount" type="number" placeholder="Tutar">
-<button onclick="addExpense()">Gider Kaydet</button>
-</div>
-
-<div class="card">
-<h2>Berber Yönetimi</h2>
-<input id="newBarber" placeholder="Yeni berber adı">
-<input id="newPercent" type="number" placeholder="Yüzde %">
-<button onclick="addBarber()">Berber Ekle</button>
-<ul>
-${state.users.map((u,i)=>`
-<li>
-${u.name} (${u.role}) 
-${u.role!=="admin"?`<span class="badge">%${u.percent}</span>
-<input type="number" value="${u.percent}" onchange="editPercent(${i},this.value)">
-<button onclick="removeBarber('${u.name}')">Sil</button>`:""}
-</li>`).join("")}
-</ul>
-</div>
-
-<div class="card">
-<h2>Fiyat Yönetimi</h2>
-${state.services.map((s,i)=>`
-<div class="row">
-<input value="${s.name}" onchange="editServiceName(${i},this.value)">
-<input type="number" value="${s.price}" onchange="editServicePrice(${i},this.value)">
+<h2>Berberler</h2>
+<div class="grid">
+${state.barbers.map((b,i)=>`
+<div class="barber-card">
+<h3>${b.name}</h3>
+<div class="badge">%${b.percent}</div>
+<input type="number" value="${b.percent}" onchange="updatePercent(${i},this.value)">
 </div>`).join("")}
+</div>
+</div>
+
+<div class="card">
+<h2>Yeni Berber Ekle</h2>
+<input id="newBarber" placeholder="Berber adı">
+<input id="newPercent" type="number" placeholder="Yüzde %">
+<button class="action" onclick="addBarber()">Ekle</button>
 </div>
 `
 }
 
-function addExpense(){
-let name=document.getElementById("expenseName").value
-let amount=Number(document.getElementById("expenseAmount").value)
-state.expenses.push({name,amount})
-renderAdmin()
+function updatePercent(i,val){
+state.barbers[i].percent=Number(val)
 }
 
 function addBarber(){
 let name=document.getElementById("newBarber").value
 let percent=Number(document.getElementById("newPercent").value)
-state.users.push({name,role:"barber",percent})
-renderAdmin()
+state.barbers.push({name,percent})
+renderBarbers()
 }
 
-function removeBarber(name){
-state.users=state.users.filter(u=>u.name!==name)
-renderAdmin()
+function renderServices(){
+app.innerHTML=`
+<div class="card">
+<h2>Hizmet Fiyatları</h2>
+${state.services.map((s,i)=>`
+<div class="card">
+<input value="${s.name}" onchange="state.services[${i}].name=this.value">
+<input type="number" value="${s.price}" onchange="state.services[${i}].price=Number(this.value)">
+</div>`).join("")}
+</div>
+`
 }
 
-function editPercent(i,val){
-state.users[i].percent=Number(val)
+function renderReports(){
+let html=`<div class="card"><h2>Berber Kazançları</h2>`
+state.barbers.forEach(b=>{
+let total=state.logs.filter(l=>l.barber===b.name)
+.reduce((a,c)=>a+c.barberEarn,0)
+html+=`<p>${b.name}: ${total} ₺</p>`
+})
+html+=`</div>`
+app.innerHTML=html
 }
 
-function editServicePrice(i,val){
-state.services[i].price=Number(val)
-}
-
-function editServiceName(i,val){
-state.services[i].name=val
-}
-
-renderLogin()
+renderDashboard()
 </script>
 
 </body>
