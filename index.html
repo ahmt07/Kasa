@@ -1,245 +1,87 @@
-<!-- ===============================
-AHMET TEKELI BARBER ERP SYSTEM
-Tek Parça Profesyonel Salon Yönetim Paneli
-================================ -->
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Ahmet Tekeli Yönetim Paneli</title>
-
-<style>
-body{font-family:Arial;margin:0;background:#0f172a;color:#fff}
-header{background:#020617;padding:15px;text-align:center;font-size:22px;font-weight:bold}
-.container{padding:15px}
-.card{background:#020617;border-radius:12px;padding:15px;margin:10px 0}
-button{padding:10px;border:none;border-radius:8px;background:#2563eb;color:white;margin:5px}
-input,select{padding:10px;border-radius:8px;border:none;width:100%;margin:5px 0}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.hidden{display:none}
-.small{font-size:12px;color:#94a3b8}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Berber Kasa Sistemi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
+<body class="bg-gray-100 p-4">
+    <div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6">
+        <h2 class="text-2xl font-bold mb-4 text-center text-blue-600">Berber Kasa Takip</h2>
+        
+        <div class="space-y-3">
+            <input type="text" id="hizmet" placeholder="İşlem (Örn: Saç Kesim)" class="w-full border p-2 rounded">
+            <input type="number" id="tutar" placeholder="Tutar (₺)" class="w-full border p-2 rounded">
+            <select id="yontem" class="w-full border p-2 rounded">
+                <option value="Nakit">Nakit</option>
+                <option value="Kart">Kredi Kartı</option>
+            </select>
+            <button onclick="islemEkle()" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 font-bold">EKLE</button>
+        </div>
 
-<body>
+        <hr class="my-6">
 
-<header>👑 Ahmet Tekeli Yönetim Paneli</header>
+        <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="bg-green-100 p-3 rounded text-center">
+                <p class="text-sm text-gray-600">Toplam Nakit</p>
+                <p id="toplamNakit" class="text-xl font-bold text-green-700">0 ₺</p>
+            </div>
+            <div class="bg-blue-100 p-3 rounded text-center">
+                <p class="text-sm text-gray-600">Toplam Kart</p>
+                <p id="toplamKart" class="text-xl font-bold text-blue-700">0 ₺</p>
+            </div>
+        </div>
 
-<div class="container">
+        <h3 class="font-bold mb-2">Bugünkü İşlemler</h3>
+        <ul id="islemListesi" class="divide-y divide-gray-200"></ul>
+        
+        <button onclick="kasaSifirla()" class="mt-6 w-full text-red-500 text-sm">Günü Kapat ve Verileri Sil</button>
+    </div>
 
-<!-- LOGIN -->
-<div id="loginPanel" class="card">
-<h3>Admin Giriş</h3>
-<input type="password" id="adminPass" placeholder="Şifre">
-<button onclick="loginAdmin()">Giriş Yap</button>
+    <script>
+        let islemler = JSON.parse(localStorage.getItem('berber_kasa')) || [];
 
-<h3>Berber Giriş</h3>
-<select id="barberSelect"></select>
-<button onclick="loginBarber()">Panele Gir</button>
-</div>
+        function islemEkle() {
+            const h = document.getElementById('hizmet').value;
+            const t = parseFloat(document.getElementById('tutar').value);
+            const y = document.getElementById('yontem').value;
 
-<!-- DASHBOARD -->
-<div id="dashboard" class="hidden">
-<div class="grid">
-<div class="card">💰 Günlük Kasa: <b id="dailyTotal">0</b>₺</div>
-<div class="card">📅 Bugün İşlem: <b id="txnCount">0</b></div>
-</div>
-<button onclick="showAdmin()">Admin Panel</button>
-<button onclick="showReports()">Raporlar</button>
-<button onclick="logout()">Çıkış</button>
-</div>
+            if(!h || !t) return alert("Eksik bilgi!");
 
-<!-- ADMIN PANEL -->
-<div id="adminPanel" class="hidden card">
-<h3>Admin Paneli</h3>
+            islemler.push({h, t, y, tarih: new Date().toLocaleTimeString()});
+            localStorage.setItem('berber_kasa', JSON.stringify(islemler));
+            render();
+            
+            document.getElementById('hizmet').value = '';
+            document.getElementById('tutar').value = '';
+        }
 
-<h4>Berber Yönetimi</h4>
-<input id="newBarber" placeholder="Yeni Berber İsmi">
-<input id="newPercent" placeholder="Yüzde (%)">
-<button onclick="addBarber()">Berber Ekle</button>
-<div id="barberList"></div>
+        function render() {
+            const liste = document.getElementById('islemListesi');
+            let nTotal = 0, kTotal = 0;
+            liste.innerHTML = '';
 
-<h4>Hizmet Yönetimi</h4>
-<input id="serviceName" placeholder="Hizmet Adı">
-<input id="servicePrice" placeholder="Fiyat">
-<button onclick="addService()">Hizmet Ekle</button>
-<div id="serviceList"></div>
+            islemler.forEach((islem, index) => {
+                if(islem.y === 'Nakit') nTotal += islem.t; else kTotal += islem.t;
+                liste.innerHTML += `<li class="py-2 flex justify-between">
+                    <span>${islem.h} <small class="text-gray-400">${islem.tarih}</small></span>
+                    <span class="font-bold">${islem.t} ₺ (${islem.y})</span>
+                </li>`;
+            });
 
-<h4>Gün Sonu</h4>
-<button onclick="closeDay()">Günü Kapat</button>
-</div>
+            document.getElementById('toplamNakit').innerText = nTotal + " ₺";
+            document.getElementById('toplamKart').innerText = kTotal + " ₺";
+        }
 
-<!-- BERBER PANEL -->
-<div id="barberPanel" class="hidden card">
-<h3 id="barberTitle"></h3>
-<select id="serviceSelect"></select>
-<button onclick="addTransaction()">İşlem Ekle</button>
-<h4>Bugünkü İşler</h4>
-<div id="txnList"></div>
-</div>
-
-<!-- REPORT PANEL -->
-<div id="reportPanel" class="hidden card">
-<h3>Aylık Rapor</h3>
-<div id="monthlyReport"></div>
-</div>
-
-</div>
-
-<script>
-// VERİLER
-let adminPassword="1234";
-let currentUser=null;
-
-let barbers=[
- {id:1,name:"Berber 1",percent:40},
- {id:2,name:"Berber 2",percent:50},
- {id:3,name:"Berber 3",percent:30}
-];
-
-let services=[
- {id:1,name:"Saç Kesim",price:300},
- {id:2,name:"Sakal",price:150}
-];
-
-let transactions=[];
-let dailyClosed=[];
-
-// LOGIN
-function loginAdmin(){
- if(document.getElementById("adminPass").value===adminPassword){
-  currentUser="admin";
-  document.getElementById("loginPanel").classList.add("hidden");
-  document.getElementById("dashboard").classList.remove("hidden");
-  renderAll();
- }else alert("Şifre yanlış");
-}
-
-function loginBarber(){
- let id=document.getElementById("barberSelect").value;
- currentUser=id;
- document.getElementById("loginPanel").classList.add("hidden");
- document.getElementById("barberPanel").classList.remove("hidden");
- document.getElementById("barberTitle").innerText=barbers.find(b=>b.id==id).name;
- renderServices();
- renderTxns();
-}
-
-function logout(){location.reload();}
-
-// ADMIN
-function showAdmin(){
- document.getElementById("adminPanel").classList.toggle("hidden");
- renderBarbers();
- renderServices();
-}
-
-function addBarber(){
- let name=document.getElementById("newBarber").value;
- let percent=parseInt(document.getElementById("newPercent").value);
- barbers.push({id:Date.now(),name,percent});
- renderBarbers();
- renderBarberSelect();
-}
-
-function renderBarbers(){
- let html="";
- barbers.forEach(b=>{
-  html+=`<div class="small">${b.name} - %${b.percent}</div>`;
- });
- document.getElementById("barberList").innerHTML=html;
-}
-
-function addService(){
- services.push({
-  id:Date.now(),
-  name:serviceName.value,
-  price:parseInt(servicePrice.value)
- });
- renderServices();
-}
-
-function renderServices(){
- let html="";
- services.forEach(s=>{
-  html+=`<div class="small">${s.name} - ${s.price}₺</div>`;
- });
- document.getElementById("serviceList").innerHTML=html;
-
- let select="";
- services.forEach(s=>{
-  select+=`<option value="${s.id}">${s.name}</option>`;
- });
- document.getElementById("serviceSelect").innerHTML=select;
-}
-
-function renderBarberSelect(){
- let html="";
- barbers.forEach(b=>{
-  html+=`<option value="${b.id}">${b.name}</option>`;
- });
- document.getElementById("barberSelect").innerHTML=html;
-}
-
-// TRANSACTION
-function addTransaction(){
- let serviceId=document.getElementById("serviceSelect").value;
- let service=services.find(s=>s.id==serviceId);
- transactions.push({
-  barberId:currentUser,
-  price:service.price,
-  date:new Date().toLocaleDateString()
- });
- renderTxns();
- renderAll();
-}
-
-function renderTxns(){
- let html="";
- transactions.filter(t=>t.barberId==currentUser)
- .forEach(t=> html+=`<div class="small">${t.price}₺</div>`);
- document.getElementById("txnList").innerHTML=html;
-}
-
-// CLOSE DAY
-function closeDay(){
- let report={date:new Date().toLocaleDateString(),barbers:[]};
- barbers.forEach(b=>{
-  let total=transactions.filter(t=>t.barberId==b.id)
-  .reduce((a,c)=>a+c.price,0);
-  let earn=total*(b.percent/100);
-  report.barbers.push({name:b.name,total,earn});
- });
- dailyClosed.push(report);
- alert("Gün kapatıldı");
-}
-
-// REPORT
-function showReports(){
- document.getElementById("reportPanel").classList.toggle("hidden");
- let html="";
- dailyClosed.forEach(r=>{
-  html+=`<div class="card">${r.date}`;
-  r.barbers.forEach(b=>{
-   html+=`<div class="small">${b.name}: ${b.total}₺ / Kazanç: ${b.earn.toFixed(0)}₺</div>`;
-  });
-  html+="</div>";
- });
- document.getElementById("monthlyReport").innerHTML=html;
-}
-
-// RENDER
-function renderAll(){
- let total=transactions.reduce((a,c)=>a+c.price,0);
- document.getElementById("dailyTotal").innerText=total;
- document.getElementById("txnCount").innerText=transactions.length;
-}
-
-renderBarberSelect();
-renderServices();
-</script>
-
+        function kasaSifirla() {
+            if(confirm("Tüm veriler silinecek, emin misin?")) {
+                islemler = [];
+                localStorage.removeItem('berber_kasa');
+                render();
+            }
+        }
+        render();
+    </script>
 </body>
 </html>
