@@ -3,142 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ahmet Tekeli - Berber Kasa</title>
+    <title>Ahmet Tekeli - Canlı Kasa</title>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-        .p-btn { border: 2px solid transparent; }
-        .active-p { border-color: #2563eb !important; background-color: #eff6ff !important; color: #1e40af !important; }
+        .p-btn { transition: all 0.2s; border: 2px solid transparent; }
+        .active-p { border-color: #2563eb !important; background-color: #eff6ff !important; color: #1e40af !important; shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
     </style>
 </head>
 <body class="bg-gray-50 p-3">
-    <div class="max-w-md mx-auto bg-white rounded-[2.5rem] shadow-2xl p-6 border border-gray-100 min-h-[90vh] flex flex-col">
+    <div class="max-w-md mx-auto bg-white rounded-[2.5rem] shadow-2xl p-6 min-h-[92vh] flex flex-col border border-gray-100">
         
         <div class="text-center mb-6">
-            <h1 class="text-xl font-black text-gray-800 uppercase tracking-tighter">AHMET TEKELİ</h1>
-            <p class="text-[10px] font-bold text-blue-600 tracking-[0.2em]">PROFESYONEL KASA SİSTEMİ</p>
+            <h1 class="text-xl font-black text-gray-800 tracking-tighter uppercase">AHMET TEKELİ</h1>
+            <div class="flex justify-center items-center gap-2 mt-1">
+                <span class="relative flex h-2 w-2">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-red-600"></span>
+                </span>
+                <p class="text-[9px] font-bold text-red-600 tracking-widest uppercase">Canlı Veritabanı Aktif</p>
+            </div>
         </div>
 
         <div class="grid grid-cols-3 gap-2 mb-6">
-            <button onclick="personelSec('Sahip')" id="btnSahip" class="p-btn active-p bg-gray-100 text-gray-600 p-3 rounded-2xl text-xs font-bold transition-all">Dükkan</button>
-            <button onclick="personelSec('Ercan')" id="btnErcan" class="p-btn bg-gray-100 text-gray-600 p-3 rounded-2xl text-xs font-bold transition-all">Ercan</button>
-            <button onclick="personelSec('Efe')" id="btnEfe" class="p-btn bg-gray-100 text-gray-600 p-3 rounded-2xl text-xs font-bold transition-all">Efe</button>
+            <button onclick="pSec('Sahip')" id="btnSahip" class="p-btn active-p bg-gray-100 text-gray-600 p-3 rounded-2xl text-xs font-bold">Dükkan</button>
+            <button onclick="pSec('Ercan')" id="btnErcan" class="p-btn bg-gray-100 text-gray-600 p-3 rounded-2xl text-xs font-bold">Ercan</button>
+            <button onclick="pSec('Efe')" id="btnEfe" class="p-btn bg-gray-100 text-gray-600 p-3 rounded-2xl text-xs font-bold">Efe</button>
         </div>
         
         <div class="grid grid-cols-3 gap-2 mb-4">
-            <button onclick="hizmetSec('Saç', 500)" class="bg-white border p-3 rounded-2xl shadow-sm active:scale-95 transition">
-                <p class="text-[9px] text-gray-400 font-bold">SAÇ</p>
+            <button onclick="hSec('Saç', 500)" class="bg-white border p-3 rounded-2xl shadow-sm active:scale-95 transition">
+                <p class="text-[9px] text-gray-400 font-bold uppercase">Saç</p>
                 <p class="text-sm font-black">500₺</p>
             </button>
-            <button onclick="hizmetSec('Sakal', 250)" class="bg-white border p-3 rounded-2xl shadow-sm active:scale-95 transition">
-                <p class="text-[9px] text-gray-400 font-bold">SAKAL</p>
+            <button onclick="hSec('Sakal', 250)" class="bg-white border p-3 rounded-2xl shadow-sm active:scale-95 transition">
+                <p class="text-[9px] text-gray-400 font-bold uppercase">Sakal</p>
                 <p class="text-sm font-black">250₺</p>
             </button>
-            <button onclick="hizmetSec('Saç+Sak', 700)" class="bg-blue-50 border border-blue-100 p-3 rounded-2xl shadow-sm active:scale-95 transition">
-                <p class="text-[9px] text-blue-400 font-bold text-center">FULL</p>
-                <p class="text-sm font-black text-blue-700">700₺</p>
+            <button onclick="hSec('Full', 700)" class="bg-blue-50 border border-blue-100 p-3 rounded-2xl shadow-sm active:scale-95 transition text-blue-700">
+                <p class="text-[9px] font-bold uppercase">Full</p>
+                <p class="text-sm font-black">700₺</p>
             </button>
-            <button onclick="hizmetSec('Çocuk', 450)" class="bg-white border p-3 rounded-2xl shadow-sm active:scale-95 transition">
-                <p class="text-[9px] text-gray-400 font-bold">ÇOCUK</p>
+            <button onclick="hSec('Çocuk', 450)" class="bg-white border p-3 rounded-2xl shadow-sm active:scale-95 transition text-gray-800">
+                <p class="text-[9px] text-gray-400 font-bold uppercase">Çocuk</p>
                 <p class="text-sm font-black">450₺</p>
             </button>
-            <button onclick="hizmetSec('Boya', 1000)" class="bg-gray-800 text-white p-3 rounded-2xl shadow-sm col-span-2 flex justify-between items-center px-4 active:scale-95 transition">
-                <span class="text-xs font-bold uppercase">SAÇ BOYA</span>
+            <button onclick="hSec('Boya', 1000)" class="bg-gray-800 text-white p-3 rounded-2xl shadow-sm col-span-2 flex justify-between items-center px-4 active:scale-95 transition">
+                <span class="text-xs font-bold uppercase tracking-widest">Saç Boya</span>
                 <span class="text-sm font-black">1000₺</span>
             </button>
         </div>
 
         <div class="bg-gray-100 p-3 rounded-2xl mb-6">
             <div class="flex gap-2 mb-2">
-                <input type="text" id="hizmet" placeholder="İşlem" class="w-1/2 p-3 rounded-xl border-none text-sm outline-none shadow-inner">
-                <input type="number" id="tutar" placeholder="₺" class="w-1/4 p-3 rounded-xl border-none text-sm font-black outline-none shadow-inner">
-                <select id="yontem" class="w-1/4 p-3 rounded-xl bg-white text-[10px] font-bold outline-none">
+                <input type="text" id="h" placeholder="İşlem" class="w-1/2 p-3 rounded-xl border-none text-sm outline-none shadow-inner">
+                <input type="number" id="t" placeholder="₺" class="w-1/4 p-3 rounded-xl border-none text-sm font-black outline-none shadow-inner">
+                <select id="y" class="w-1/4 p-3 rounded-xl bg-white text-[10px] font-bold outline-none">
                     <option value="Nakit">NAKİT</option>
                     <option value="Kart">KART</option>
                 </select>
             </div>
-            <button onclick="islemEkle()" class="w-full bg-blue-600 text-white p-4 rounded-xl font-black shadow-lg active:bg-blue-700 transition">KAYDET</button>
+            <button onclick="kaydet()" id="kayitBtn" class="w-full bg-blue-600 text-white p-4 rounded-xl font-black shadow-lg active:bg-blue-700 transition">KAYDET</button>
         </div>
 
         <div class="grid grid-cols-2 gap-3 mb-6">
             <div class="bg-orange-50 p-4 rounded-2xl border border-orange-100 text-center">
-                <p class="text-[10px] font-bold text-orange-600 uppercase">ERCAN CİRO</p>
-                <p id="ciroErcan" class="text-xl font-black text-orange-800">0 ₺</p>
+                <p class="text-[10px] font-bold text-orange-600 uppercase">ERCAN TOPLAM</p>
+                <p id="cErcan" class="text-xl font-black text-orange-800">0 ₺</p>
             </div>
             <div class="bg-purple-50 p-4 rounded-2xl border border-purple-100 text-center">
-                <p class="text-[10px] font-bold text-purple-600 uppercase">EFE CİRO</p>
-                <p id="ciroEfe" class="text-xl font-black text-purple-800">0 ₺</p>
+                <p class="text-[10px] font-bold text-purple-600 uppercase">EFE TOPLAM</p>
+                <p id="cEfe" class="text-xl font-black text-purple-800">0 ₺</p>
             </div>
         </div>
 
-        <div class="bg-gray-900 text-white p-6 rounded-[2rem] mb-6">
+        <div class="bg-gray-900 text-white p-6 rounded-[2.5rem] mb-6 shadow-xl">
             <div class="flex justify-between items-center border-b border-gray-800 pb-3 mb-3">
-                <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Genel Toplam</span>
-                <span id="toplamCiro" class="text-3xl font-black">0 ₺</span>
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Kasa Genel</span>
+                <span id="cToplam" class="text-3xl font-black tracking-tighter text-white">0 ₺</span>
             </div>
-            <div class="flex justify-between text-xs font-bold pt-2">
-                <span class="text-emerald-400 italic">NAKİT: <span id="tNakit" class="font-black">0₺</span></span>
-                <span class="text-blue-400 italic">KART: <span id="tKart" class="font-black">0₺</span></span>
+            <div class="flex justify-between text-xs font-bold">
+                <span class="text-emerald-400">NAKİT: <span id="nToplam">0₺</span></span>
+                <span class="text-blue-400">KART: <span id="kToplam">0₺</span></span>
             </div>
         </div>
 
         <div class="mt-auto">
-            <button onclick="kasaSifirla()" class="w-full py-4 text-gray-300 text-[11px] font-bold border border-dashed border-gray-200 rounded-2xl uppercase tracking-[0.3em] active:bg-red-50 active:text-red-500 active:border-red-200 transition-all">Günü Kapat</button>
+            <button onclick="kasaSifirla()" class="w-full py-4 text-gray-300 text-[10px] font-bold border-2 border-dashed border-gray-200 rounded-2xl uppercase tracking-[0.3em] active:text-red-500 active:border-red-500 transition-all">Günü Kapat / Sıfırla</button>
         </div>
     </div>
 
     <script>
-        let islemler = JSON.parse(localStorage.getItem('tekeli_kasa_v6')) || [];
-        let aktifPersonel = 'Sahip';
+        // FIREBASE AYARLARIN
+        const firebaseConfig = {
+            apiKey: "AIzaSyDpT9QsG7V23KtKZMVXmIfeX_Mg-eAeBZM",
+            databaseURL: "https://berberkasa-default-rtdb.firebaseio.com/", // Not: projectId'ne göre varsayılan link budur.
+            projectId: "berberkasa",
+        };
 
-        function personelSec(p) {
-            aktifPersonel = p;
+        // Firebase'i Başlat
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        
+        let p = 'Sahip';
+
+        function pSec(secilen) {
+            p = secilen;
             document.querySelectorAll('.p-btn').forEach(b => b.classList.remove('active-p'));
-            document.getElementById('btn' + p).classList.add('active-p');
+            document.getElementById('btn' + secilen).classList.add('active-p');
         }
 
-        function hizmetSec(ad, fiyat) {
-            document.getElementById('hizmet').value = ad;
-            document.getElementById('tutar').value = fiyat;
+        function hSec(ad, fiyat) {
+            document.getElementById('h').value = ad;
+            document.getElementById('t').value = fiyat;
         }
 
-        function islemEkle() {
-            const h = document.getElementById('hizmet').value;
-            const t = parseFloat(document.getElementById('tutar').value);
-            const y = document.getElementById('yontem').value;
+        function kaydet() {
+            const h = document.getElementById('h').value;
+            const t = parseFloat(document.getElementById('t').value);
+            const y = document.getElementById('y').value;
             if(!h || isNaN(t)) return;
 
-            islemler.unshift({h, t, y, p: aktifPersonel});
-            localStorage.setItem('tekeli_kasa_v6', JSON.stringify(islemler));
-            render();
-            document.getElementById('hizmet').value = '';
-            document.getElementById('tutar').value = '';
-        }
+            const btn = document.getElementById('kayitBtn');
+            btn.innerText = "İŞLENİYOR...";
+            btn.disabled = true;
 
-        function render() {
-            let nT = 0, kT = 0, ercanCiro = 0, efeCiro = 0;
-            islemler.forEach((i) => {
-                const t = parseFloat(i.t);
-                if(i.y === 'Nakit') nT += t; else kT += t;
-                if(i.p === 'Ercan') ercanCiro += t;
-                if(i.p === 'Efe') efeCiro += t;
+            // Firebase Canlı Veritabanına Ekle
+            db.ref('kasa/').push({
+                h, t, y, p,
+                tarih: Date.now()
+            }).then(() => {
+                document.getElementById('h').value = '';
+                document.getElementById('t').value = '';
+                btn.innerText = "KAYDET";
+                btn.disabled = false;
             });
-
-            document.getElementById('toplamCiro').innerText = (nT + kT) + " ₺";
-            document.getElementById('tNakit').innerText = nT + "₺";
-            document.getElementById('tKart').innerText = kT + "₺";
-            document.getElementById('ciroErcan').innerText = ercanCiro + " ₺";
-            document.getElementById('ciroEfe').innerText = efeCiro + " ₺";
         }
+
+        // VERİLERİ ANLIK DİNLEME (Tüm telefonlarda aynı anda güncellenir)
+        db.ref('kasa/').on('value', (snapshot) => {
+            const veriler = snapshot.val();
+            let nT = 0, kT = 0, ercanCiro = 0, efeCiro = 0;
+
+            if (veriler) {
+                Object.values(veriler).forEach(i => {
+                    const tutar = parseFloat(i.t);
+                    if (i.y === 'Nakit') nT += tutar; else kT += tutar;
+                    if (i.p === 'Ercan') ercanCiro += tutar;
+                    if (i.p === 'Efe') efeCiro += tutar;
+                });
+            }
+
+            document.getElementById('cToplam').innerText = (nT + kT) + " ₺";
+            document.getElementById('nToplam').innerText = nT + "₺";
+            document.getElementById('kToplam').innerText = kT + "₺";
+            document.getElementById('ciroErcan' ? 'ciroErcan' : 'cErcan').innerText = ercanCiro + " ₺";
+            document.getElementById('ciroEfe' ? 'ciroEfe' : 'cEfe').innerText = efeCiro + " ₺";
+        });
 
         function kasaSifirla() {
-            if(confirm("Sayın Ahmet Tekeli, bugünü kapatmak ve tüm bakiyeyi sıfırlamak istediğinize emin misiniz?")) {
-                islemler = [];
-                localStorage.removeItem('tekeli_kasa_v6');
-                render();
+            if(confirm("Sayın Ahmet Tekeli, bugünü kapatıp canlı veritabanını sıfırlamak istiyor musunuz?")) {
+                db.ref('kasa/').remove();
             }
         }
-        render();
     </script>
 </body>
 </html>
