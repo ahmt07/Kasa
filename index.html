@@ -12,7 +12,7 @@
     </style>
 </head>
 <body class="bg-gray-50 p-3">
-    <div class="max-w-md mx-auto bg-white rounded-[2.5rem] shadow-2xl p-6 border border-gray-100">
+    <div class="max-w-md mx-auto bg-white rounded-[2.5rem] shadow-2xl p-6 border border-gray-100 min-h-[90vh] flex flex-col">
         
         <div class="text-center mb-6">
             <h1 class="text-xl font-black text-gray-800 uppercase tracking-tighter">AHMET TEKELİ</h1>
@@ -43,7 +43,7 @@
                 <p class="text-sm font-black">450₺</p>
             </button>
             <button onclick="hizmetSec('Boya', 1000)" class="bg-gray-800 text-white p-3 rounded-2xl shadow-sm col-span-2 flex justify-between items-center px-4 active:scale-95 transition">
-                <span class="text-xs font-bold">SAÇ BOYA</span>
+                <span class="text-xs font-bold uppercase">SAÇ BOYA</span>
                 <span class="text-sm font-black">1000₺</span>
             </button>
         </div>
@@ -61,36 +61,34 @@
         </div>
 
         <div class="grid grid-cols-2 gap-3 mb-6">
-            <div class="bg-orange-50 p-4 rounded-2xl border border-orange-100">
+            <div class="bg-orange-50 p-4 rounded-2xl border border-orange-100 text-center">
                 <p class="text-[10px] font-bold text-orange-600 uppercase">ERCAN CİRO</p>
                 <p id="ciroErcan" class="text-xl font-black text-orange-800">0 ₺</p>
             </div>
-            <div class="bg-purple-50 p-4 rounded-2xl border border-purple-100">
+            <div class="bg-purple-50 p-4 rounded-2xl border border-purple-100 text-center">
                 <p class="text-[10px] font-bold text-purple-600 uppercase">EFE CİRO</p>
                 <p id="ciroEfe" class="text-xl font-black text-purple-800">0 ₺</p>
             </div>
         </div>
 
-        <div class="bg-gray-900 text-white p-5 rounded-[2rem] mb-6">
+        <div class="bg-gray-900 text-white p-6 rounded-[2rem] mb-6">
             <div class="flex justify-between items-center border-b border-gray-800 pb-3 mb-3">
-                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Genel Toplam</span>
-                <span id="toplamCiro" class="text-2xl font-black">0 ₺</span>
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Genel Toplam</span>
+                <span id="toplamCiro" class="text-3xl font-black">0 ₺</span>
             </div>
-            <div class="flex justify-between text-[11px] font-bold">
-                <span class="text-emerald-400">NAKİT: <span id="tNakit">0₺</span></span>
-                <span class="text-blue-400">KART: <span id="tKart">0₺</span></span>
+            <div class="flex justify-between text-xs font-bold pt-2">
+                <span class="text-emerald-400 italic">NAKİT: <span id="tNakit" class="font-black">0₺</span></span>
+                <span class="text-blue-400 italic">KART: <span id="tKart" class="font-black">0₺</span></span>
             </div>
         </div>
 
-        <div class="max-h-40 overflow-y-auto px-1">
-            <ul id="islemListesi" class="space-y-2"></ul>
+        <div class="mt-auto">
+            <button onclick="kasaSifirla()" class="w-full py-4 text-gray-300 text-[11px] font-bold border border-dashed border-gray-200 rounded-2xl uppercase tracking-[0.3em] active:bg-red-50 active:text-red-500 active:border-red-200 transition-all">Günü Kapat</button>
         </div>
-        
-        <button onclick="kasaSifirla()" class="mt-8 w-full py-2 text-gray-300 text-[9px] font-bold border border-dashed border-gray-200 rounded-xl uppercase tracking-widest hover:text-red-400">Günü Kapat</button>
     </div>
 
     <script>
-        let islemler = JSON.parse(localStorage.getItem('tekeli_kasa')) || [];
+        let islemler = JSON.parse(localStorage.getItem('tekeli_kasa_v6')) || [];
         let aktifPersonel = 'Sahip';
 
         function personelSec(p) {
@@ -110,35 +108,20 @@
             const y = document.getElementById('yontem').value;
             if(!h || isNaN(t)) return;
 
-            islemler.unshift({h, t, y, p: aktifPersonel, tarih: new Date().toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'})});
-            localStorage.setItem('tekeli_kasa', JSON.stringify(islemler));
+            islemler.unshift({h, t, y, p: aktifPersonel});
+            localStorage.setItem('tekeli_kasa_v6', JSON.stringify(islemler));
             render();
             document.getElementById('hizmet').value = '';
             document.getElementById('tutar').value = '';
         }
 
         function render() {
-            const liste = document.getElementById('islemListesi');
             let nT = 0, kT = 0, ercanCiro = 0, efeCiro = 0;
-            liste.innerHTML = '';
-
             islemler.forEach((i) => {
                 const t = parseFloat(i.t);
                 if(i.y === 'Nakit') nT += t; else kT += t;
                 if(i.p === 'Ercan') ercanCiro += t;
                 if(i.p === 'Efe') efeCiro += t;
-
-                liste.innerHTML += `
-                    <li class="flex justify-between items-center p-3 bg-white rounded-xl text-[11px] border shadow-sm">
-                        <div class="flex flex-col">
-                            <span class="font-black text-gray-700">${i.p}</span>
-                            <span class="text-gray-400">${i.h}</span>
-                        </div>
-                        <div class="text-right">
-                            <span class="font-black text-gray-800">${t}₺</span>
-                            <span class="block text-[8px] font-bold ${i.y === 'Nakit' ? 'text-emerald-500' : 'text-blue-500'} uppercase">${i.y}</span>
-                        </div>
-                    </li>`;
             });
 
             document.getElementById('toplamCiro').innerText = (nT + kT) + " ₺";
@@ -149,9 +132,9 @@
         }
 
         function kasaSifirla() {
-            if(confirm("Sayın Ahmet Tekeli, bugünü kapatmak ve kayıtları temizlemek istediğinize emin misiniz?")) {
+            if(confirm("Sayın Ahmet Tekeli, bugünü kapatmak ve tüm bakiyeyi sıfırlamak istediğinize emin misiniz?")) {
                 islemler = [];
-                localStorage.removeItem('tekeli_kasa');
+                localStorage.removeItem('tekeli_kasa_v6');
                 render();
             }
         }
