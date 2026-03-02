@@ -30,16 +30,16 @@
         </div>
 
         <div class="grid grid-cols-4 gap-2 mb-3">
-            <button onclick="pSec('Sahip')" id="btnSahip" class="p-btn active-p bg-slate-50 p-2 rounded-xl text-[9px] font-bold uppercase">Dükkan</button>
-            <button onclick="pSec('Ercan')" id="btnErcan" class="p-btn bg-slate-50 p-2 rounded-xl text-[9px] font-bold uppercase">Ercan</button>
-            <button onclick="pSec('Efe')" id="btnEfe" class="p-btn bg-slate-50 p-2 rounded-xl text-[9px] font-bold uppercase">Efe</button>
+            <button onclick="pSec('Ahmet Tekeli')" id="btnSahip" class="p-btn active-p bg-slate-50 p-2 rounded-xl text-[9px] font-bold uppercase">AHMET TEKELİ</button>
+            <button onclick="pSec('Ercan Doğru')" id="btnErcan" class="p-btn bg-slate-50 p-2 rounded-xl text-[9px] font-bold uppercase">ERCAN DOĞRU</button>
+            <button onclick="pSec('Efe Kara')" id="btnEfe" class="p-btn bg-slate-50 p-2 rounded-xl text-[9px] font-bold uppercase">EFE KARA</button>
             <button onclick="pSec('Gider')" id="btnGider" class="p-btn bg-red-50 text-red-600 p-2 rounded-xl text-[9px] font-bold uppercase">GİDER</button>
         </div>
         
         <div class="grid grid-cols-3 gap-2 mb-3">
             <button onclick="hSec('Saç', 500)" class="bg-white border p-3 rounded-xl shadow-sm text-[10px] font-bold uppercase active:bg-gray-100">Saç 500</button>
             <button onclick="hSec('Sakal', 250)" class="bg-white border p-3 rounded-xl shadow-sm text-[10px] font-bold uppercase active:bg-gray-100">Sakal 250</button>
-            <button onclick="hSec('Full', 700)" class="bg-blue-50 border border-blue-100 p-3 rounded-xl shadow-sm text-[10px] font-black text-blue-700 uppercase active:bg-blue-100">Full 700</button>
+            <button onclick="hSec('Saç-Sakal', 700)" class="bg-blue-50 border border-blue-100 p-3 rounded-xl shadow-sm text-[10px] font-black text-blue-700 uppercase active:bg-blue-100">Full 700</button>
             <button onclick="hSec('Çocuk', 450)" class="bg-emerald-50 border border-emerald-100 p-3 rounded-xl shadow-sm text-[10px] font-black text-emerald-700 uppercase active:bg-emerald-100">Çocuk 450</button>
             <button onclick="hSec('Yıkama', 100)" class="bg-white border p-3 rounded-xl shadow-sm text-[10px] font-bold uppercase active:bg-gray-100">Yıkama 100</button>
             <button onclick="hSec('Boya', 1000)" class="bg-slate-800 text-white p-3 rounded-xl shadow-sm text-[10px] font-bold uppercase active:bg-black">Boya 1000</button>
@@ -97,13 +97,12 @@
                 <div class="text-orange-400">IBAN: <span id="iToplam">0₺</span></div>
             </div>
             <div class="bg-white/10 p-3 rounded-xl flex justify-between items-center">
-                <p class="text-[9px] font-bold text-slate-400 uppercase italic">Net Kâr (Dükkan)</p>
+                <p class="text-[9px] font-bold text-slate-400 uppercase italic">Dükkan Bugün Net</p>
                 <p id="netKalan" class="text-lg font-black text-emerald-400">0 ₺</p>
             </div>
         </div>
 
         <div class="bg-gray-50 border-2 border-dashed border-gray-200 p-4 rounded-2xl text-center mb-3">
-            <p class="text-[10px] font-black text-gray-500 uppercase mb-1 italic text-center">Ödeme İçin İban</p>
             <p class="text-[14px] font-bold text-slate-800 uppercase mb-1">Emine Tekeli</p>
             <p id="ibanText" class="text-[10px] font-mono text-slate-600 mb-2 break-all px-2">TR95 0013 4000 0160 3155 6000 01</p>
             <button onclick="kopyalaIban()" class="bg-blue-600 text-white text-[10px] px-8 py-2 rounded-full font-bold uppercase active:scale-95 shadow-md">İbanı Kopyala</button>
@@ -112,8 +111,9 @@
         <button onclick="kasaSifirla()" class="w-full py-3 text-slate-400 text-[9px] font-bold border-2 border-dashed border-slate-200 rounded-xl uppercase mb-3 active:text-red-600">Günü Kapat</button>
 
         <div class="bg-blue-600 text-white p-4 rounded-[2rem] shadow-xl text-center">
-            <p class="text-[9px] font-black uppercase opacity-80 tracking-widest">BU AY TOPLAM CİRO</p>
+            <p class="text-[9px] font-black uppercase opacity-80 tracking-widest italic">BU AY DÜKKANA KALAN (NET KÂR)</p>
             <h2 id="aylikCiro" class="text-2xl font-black">0 ₺</h2>
+            <p class="text-[8px] opacity-60 mt-1 uppercase tracking-wider">Giderler ve Personel Primleri Düşüldü</p>
         </div>
     </div>
 
@@ -154,10 +154,22 @@
             btn.disabled = true;
             const ayID = new Date().getFullYear() + "-" + (new Date().getMonth() + 1);
 
+            // Veritabanına işlemi ekle
             db.ref('kasa/').push({ h, t, y, p, tarih: Date.now() });
-            if(p !== 'Gider') {
-                db.ref('aylik/' + ayID).transaction(current => (current || 0) + t);
+            
+            // AYLIK NET HESABI (Dükkana Kalan Kısmı Kaydet)
+            let dukkanNet = 0;
+            if (p === 'Gider') {
+                dukkanNet = -t; 
+            } else if (p === 'Ercan') {
+                dukkanNet = t * 0.50; // %50 dükkana
+            } else if (p === 'Efe') {
+                dukkanNet = t * 0.70; // %30 Efe payı, %70 dükkana kalır
+            } else {
+                dukkanNet = t; // Dükkan cirosunun tamamı dükkana
             }
+
+            db.ref('aylikNet/' + ayID).transaction(curr => (curr || 0) + dukkanNet);
 
             setTimeout(() => {
                 document.getElementById('h').value = '';
@@ -184,7 +196,7 @@
             }
 
             const ePay = (eC.n + eC.k + eC.i) * 0.50; 
-            const fPay = (fC.n + fC.k + fC.i) * 0.30; 
+            const fPay = (fC.n + fC.k + fC.i) * 0.30; // Efe %30 Prim
             const bugunToplam = nT + kT + iT;
 
             document.getElementById('cToplam').innerText = bugunToplam + " ₺";
@@ -211,8 +223,8 @@
         });
 
         const ayID = new Date().getFullYear() + "-" + (new Date().getMonth() + 1);
-        db.ref('aylik/' + ayID).on('value', (snapshot) => {
-            document.getElementById('aylikCiro').innerText = (snapshot.val() || 0).toLocaleString('tr-TR') + " ₺";
+        db.ref('aylikNet/' + ayID).on('value', (snapshot) => {
+            document.getElementById('aylikCiro').innerText = Math.floor(snapshot.val() || 0).toLocaleString('tr-TR') + " ₺";
         });
 
         function kasaSifirla() {
