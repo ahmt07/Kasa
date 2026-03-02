@@ -10,11 +10,11 @@
     <style>
         body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         .p-btn { transition: all 0.2s; border: 2px solid transparent; }
-        .active-p { border-color: #2563eb !important; background-color: #eff6ff !important; color: #1e40af !important; shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+        .active-p { border-color: #2563eb !important; background-color: #eff6ff !important; color: #1e40af !important; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
     </style>
 </head>
-<body class="bg-gray-50 p-3">
-    <div class="max-w-md mx-auto bg-white rounded-[2.5rem] shadow-2xl p-6 min-h-[92vh] flex flex-col border border-gray-100">
+<body class="bg-gray-50 p-3 text-slate-900">
+    <div class="max-w-md mx-auto bg-white rounded-[2.5rem] shadow-2xl p-6 min-h-[95vh] flex flex-col border border-gray-100">
         
         <div class="text-center mb-6">
             <h1 class="text-xl font-black text-gray-800 tracking-tighter uppercase">AHMET TEKELİ</h1>
@@ -23,14 +23,14 @@
                   <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                   <span class="relative inline-flex rounded-full h-2 w-2 bg-red-600"></span>
                 </span>
-                <p class="text-[9px] font-bold text-red-600 tracking-widest uppercase">Canlı Veritabanı Aktif</p>
+                <p class="text-[9px] font-bold text-red-600 tracking-widest uppercase italic">Canlı Veritabanı Aktif</p>
             </div>
         </div>
 
         <div class="grid grid-cols-3 gap-2 mb-6">
-            <button onclick="pSec('Sahip')" id="btnSahip" class="p-btn active-p bg-gray-100 text-gray-600 p-3 rounded-2xl text-xs font-bold">Dükkan</button>
-            <button onclick="pSec('Ercan')" id="btnErcan" class="p-btn bg-gray-100 text-gray-600 p-3 rounded-2xl text-xs font-bold">Ercan</button>
-            <button onclick="pSec('Efe')" id="btnEfe" class="p-btn bg-gray-100 text-gray-600 p-3 rounded-2xl text-xs font-bold">Efe</button>
+            <button onclick="pSec('Sahip')" id="btnSahip" class="p-btn active-p bg-gray-100 text-gray-600 p-3 rounded-2xl text-xs font-bold uppercase">Dükkan</button>
+            <button onclick="pSec('Ercan')" id="btnErcan" class="p-btn bg-gray-100 text-gray-600 p-3 rounded-2xl text-xs font-bold uppercase">Ercan</button>
+            <button onclick="pSec('Efe')" id="btnEfe" class="p-btn bg-gray-100 text-gray-600 p-3 rounded-2xl text-xs font-bold uppercase">Efe</button>
         </div>
         
         <div class="grid grid-cols-3 gap-2 mb-4">
@@ -46,64 +46,56 @@
                 <p class="text-[9px] font-bold uppercase">Full</p>
                 <p class="text-sm font-black">700₺</p>
             </button>
-            <button onclick="hSec('Çocuk', 450)" class="bg-white border p-3 rounded-2xl shadow-sm active:scale-95 transition text-gray-800">
-                <p class="text-[9px] text-gray-400 font-bold uppercase">Çocuk</p>
-                <p class="text-sm font-black">450₺</p>
-            </button>
-            <button onclick="hSec('Boya', 1000)" class="bg-gray-800 text-white p-3 rounded-2xl shadow-sm col-span-2 flex justify-between items-center px-4 active:scale-95 transition">
-                <span class="text-xs font-bold uppercase tracking-widest">Saç Boya</span>
-                <span class="text-sm font-black">1000₺</span>
-            </button>
         </div>
 
-        <div class="bg-gray-100 p-3 rounded-2xl mb-6">
-            <div class="flex gap-2 mb-2">
-                <input type="text" id="h" placeholder="İşlem" class="w-1/2 p-3 rounded-xl border-none text-sm outline-none shadow-inner">
-                <input type="number" id="t" placeholder="₺" class="w-1/4 p-3 rounded-xl border-none text-sm font-black outline-none shadow-inner">
-                <select id="y" class="w-1/4 p-3 rounded-xl bg-white text-[10px] font-bold outline-none">
+        <div class="bg-gray-100 p-3 rounded-2xl mb-6 shadow-inner border border-gray-200">
+            <div class="flex gap-2 mb-3">
+                <input type="text" id="h" placeholder="İşlem" class="w-1/2 p-3 rounded-xl border-none text-sm outline-none shadow-sm">
+                <input type="number" id="t" placeholder="₺" class="w-1/4 p-3 rounded-xl border-none text-sm font-black outline-none shadow-sm">
+                <select id="y" class="w-1/4 p-3 rounded-xl bg-white text-[10px] font-bold outline-none border border-gray-200">
                     <option value="Nakit">NAKİT</option>
                     <option value="Kart">KART</option>
                 </select>
             </div>
-            <button onclick="kaydet()" id="kayitBtn" class="w-full bg-blue-600 text-white p-4 rounded-xl font-black shadow-lg active:bg-blue-700 transition">KAYDET</button>
+            <button onclick="kaydet()" id="kayitBtn" class="w-full bg-blue-600 text-white p-4 rounded-xl font-black shadow-lg active:bg-blue-700 transition uppercase tracking-widest">Sisteme Kaydet</button>
         </div>
 
         <div class="grid grid-cols-2 gap-3 mb-6">
-            <div class="bg-orange-50 p-4 rounded-2xl border border-orange-100 text-center">
-                <p class="text-[10px] font-bold text-orange-600 uppercase">ERCAN TOPLAM</p>
-                <p id="cErcan" class="text-xl font-black text-orange-800">0 ₺</p>
+            <div class="bg-orange-50 p-4 rounded-3xl border border-orange-100 text-center shadow-sm">
+                <p class="text-[10px] font-bold text-orange-600 uppercase">ERCAN CİRO</p>
+                <p id="cErcan" class="text-2xl font-black text-orange-800 tracking-tighter">0 ₺</p>
             </div>
-            <div class="bg-purple-50 p-4 rounded-2xl border border-purple-100 text-center">
-                <p class="text-[10px] font-bold text-purple-600 uppercase">EFE TOPLAM</p>
-                <p id="cEfe" class="text-xl font-black text-purple-800">0 ₺</p>
+            <div class="bg-purple-50 p-4 rounded-3xl border border-purple-100 text-center shadow-sm">
+                <p class="text-[10px] font-bold text-purple-600 uppercase">EFE CİRO</p>
+                <p id="cEfe" class="text-2xl font-black text-purple-800 tracking-tighter">0 ₺</p>
             </div>
         </div>
 
-        <div class="bg-gray-900 text-white p-6 rounded-[2.5rem] mb-6 shadow-xl">
+        <div class="bg-gray-900 text-white p-6 rounded-[2.5rem] mb-6 shadow-2xl">
             <div class="flex justify-between items-center border-b border-gray-800 pb-3 mb-3">
-                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Kasa Genel</span>
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">Toplam Kasa</span>
                 <span id="cToplam" class="text-3xl font-black tracking-tighter text-white">0 ₺</span>
             </div>
-            <div class="flex justify-between text-xs font-bold">
-                <span class="text-emerald-400">NAKİT: <span id="nToplam">0₺</span></span>
-                <span class="text-blue-400">KART: <span id="kToplam">0₺</span></span>
+            <div class="flex justify-between text-[11px] font-bold">
+                <span class="text-emerald-400 italic font-black uppercase">Nakit: <span id="nToplam">0₺</span></span>
+                <span class="text-blue-400 italic font-black uppercase">Kart: <span id="kToplam">0₺</span></span>
             </div>
         </div>
 
         <div class="mt-auto">
-            <button onclick="kasaSifirla()" class="w-full py-4 text-gray-300 text-[10px] font-bold border-2 border-dashed border-gray-200 rounded-2xl uppercase tracking-[0.3em] active:text-red-500 active:border-red-500 transition-all">Günü Kapat / Sıfırla</button>
+            <button onclick="kasaSifirla()" class="w-full py-4 text-gray-300 text-[10px] font-bold border-2 border-dashed border-gray-200 rounded-2xl uppercase tracking-[0.4em] active:text-red-600 active:border-red-300 transition-all">Günü Kapat</button>
         </div>
     </div>
 
     <script>
-        // FIREBASE AYARLARIN
+        // FIREBASE BELGIUM BAĞLANTISI
         const firebaseConfig = {
             apiKey: "AIzaSyDpT9QsG7V23KtKZMVXmIfeX_Mg-eAeBZM",
-            databaseURL: "https://berberkasa-default-rtdb.firebaseio.com/", // Not: projectId'ne göre varsayılan link budur.
+            databaseURL: "https://berberkasa-default-rtdb.europe-west1.firebasedatabase.app/",
             projectId: "berberkasa",
         };
 
-        // Firebase'i Başlat
+        // Firebase Başlat
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
         
@@ -130,19 +122,23 @@
             btn.innerText = "İŞLENİYOR...";
             btn.disabled = true;
 
-            // Firebase Canlı Veritabanına Ekle
+            // Veriyi Firebase'e gönder
             db.ref('kasa/').push({
                 h, t, y, p,
                 tarih: Date.now()
             }).then(() => {
                 document.getElementById('h').value = '';
                 document.getElementById('t').value = '';
-                btn.innerText = "KAYDET";
+                btn.innerText = "SİSTEME KAYDET";
+                btn.disabled = false;
+            }).catch(err => {
+                alert("Hata: " + err.message);
+                btn.innerText = "TEKRAR DENE";
                 btn.disabled = false;
             });
         }
 
-        // VERİLERİ ANLIK DİNLEME (Tüm telefonlarda aynı anda güncellenir)
+        // VERİLERİ ANLIK DİNLEME (Tüm telefonlarda senkronize)
         db.ref('kasa/').on('value', (snapshot) => {
             const veriler = snapshot.val();
             let nT = 0, kT = 0, ercanCiro = 0, efeCiro = 0;
@@ -156,15 +152,16 @@
                 });
             }
 
+            // Ekrandaki rakamları güncelle
             document.getElementById('cToplam').innerText = (nT + kT) + " ₺";
             document.getElementById('nToplam').innerText = nT + "₺";
             document.getElementById('kToplam').innerText = kT + "₺";
-            document.getElementById('ciroErcan' ? 'ciroErcan' : 'cErcan').innerText = ercanCiro + " ₺";
-            document.getElementById('ciroEfe' ? 'ciroEfe' : 'cEfe').innerText = efeCiro + " ₺";
+            document.getElementById('cErcan').innerText = ercanCiro + " ₺";
+            document.getElementById('cEfe').innerText = efeCiro + " ₺";
         });
 
         function kasaSifirla() {
-            if(confirm("Sayın Ahmet Tekeli, bugünü kapatıp canlı veritabanını sıfırlamak istiyor musunuz?")) {
+            if(confirm("Sayın Ahmet Tekeli, tüm canlı kasa verilerini sıfırlamak ve günü kapatmak istediğine emin misin?")) {
                 db.ref('kasa/').remove();
             }
         }
