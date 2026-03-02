@@ -3,56 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ahmet Tekeli KASA - V22 Detaylı</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Tekeli Kasa">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3001/3001064.png">
+    
+    <title>Ahmet Tekeli KASA - V24</title>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
     <style>
         body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         .p-btn { transition: all 0.2s; border: 2px solid transparent; background-color: #f8fafc; color: #64748b; }
         .active-p { border-color: #2563eb !important; background-color: #eff6ff !important; color: #1e40af !important; font-weight: 900 !important; }
         .islem-row:nth-child(even) { background-color: #f9fafb; }
-        #raporModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100; padding: 20px; align-items: center; justify-content: center; }
-        .rapor-icerik { background: white; width: 100%; max-width: 350px; border-radius: 2rem; padding: 20px; max-height: 85vh; overflow-y: auto; }
+        #raporModal, #kurulumModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100; padding: 20px; align-items: center; justify-content: center; }
+        .rapor-icerik, .kurulum-icerik { background: white; width: 100%; max-width: 350px; border-radius: 2rem; padding: 20px; max-height: 85vh; overflow-y: auto; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        .install-pulse { animation: bounce 2s infinite; }
     </style>
 </head>
 <body class="bg-slate-50 p-2 text-slate-900 text-[10px]">
 
+    <div id="kurulumModal">
+        <div class="kurulum-icerik shadow-2xl text-center">
+            <i class="fa-solid fa-mobile-screen-button text-4xl text-blue-600 mb-4"></i>
+            <h2 class="text-base font-black mb-2 uppercase">Telefona Uygulama Olarak Ekle</h2>
+            <div class="text-[10px] text-slate-600 space-y-4 text-left p-2">
+                <p class="bg-blue-50 p-2 rounded-lg"><b>iPhone (Safari):</b> Alt menüdeki <i class="fa-solid fa-share-from-square"></i> <b>Paylaş</b> butonuna bas, sonra <b>"Ana Ekranına Ekle"</b> seçeneğini seç.</p>
+                <p class="bg-orange-50 p-2 rounded-lg"><b>Android (Chrome):</b> Sağ üstteki <b>üç noktaya (⋮)</b> bas, sonra <b>"Ana Ekrana Ekle"</b> veya <b>"Uygulamayı Yükle"</b> seçeneğini seç.</p>
+            </div>
+            <button onclick="document.getElementById('kurulumModal').style.display='none'" class="mt-6 w-full py-3 bg-slate-900 text-white rounded-xl font-bold uppercase">ANLADIM ABİ</button>
+        </div>
+    </div>
+
     <div id="raporModal">
         <div class="rapor-icerik shadow-2xl border border-slate-200">
             <div class="flex justify-between items-center mb-4 border-b pb-2">
-                <h2 class="text-base font-black uppercase tracking-tighter text-blue-800">DETAYLI ÖDEME RAPORU</h2>
-                <button onclick="document.getElementById('raporModal').style.display='none'" class="text-red-500 font-black text-xs px-2 py-1 bg-red-50 rounded-lg">KAPAT</button>
+                <h2 class="text-base font-black uppercase tracking-tighter text-blue-800">DETAYLI RAPOR</h2>
+                <button onclick="document.getElementById('raporModal').style.display='none'" class="text-red-500 font-black text-xs px-2 py-1 bg-red-50 rounded-lg uppercase">Kapat</button>
             </div>
-            <div id="raporData" class="space-y-3 text-[9px]">
-                </div>
-            <div class="mt-4 pt-3 border-t text-[8px] text-slate-400 italic text-center uppercase tracking-widest">Ahmet Tekeli VIP Kasa</div>
+            <div id="raporData" class="space-y-3 text-[9px]"></div>
+            <div class="mt-4 pt-3 border-t text-[8px] text-slate-400 italic text-center uppercase">Ahmet Tekeli VIP Kasa</div>
         </div>
     </div>
 
     <div class="max-w-md mx-auto bg-white rounded-[2.5rem] shadow-2xl p-4 min-h-[95vh] flex flex-col border border-slate-100">
         
-        <div class="text-center mb-2">
-            <h1 class="text-xl font-black text-slate-900 tracking-tighter uppercase leading-none italic">AHMET TEKELİ KASA</h1>
-            <p id="bugunTarih" class="text-[8px] font-bold text-blue-600 tracking-widest uppercase mt-1 italic"></p>
-        </div>
+        <div class="flex justify-between items-start mb-2">
+            <div onclick="document.getElementById('kurulumModal').style.display='flex'" class="bg-blue-50 text-blue-600 p-2 rounded-full install-pulse cursor-pointer">
+                <i class="fa-solid fa-download text-xs"></i>
+            </div>
+            <div class="text-center">
+                <h1 class="text-xl font-black text-slate-900 tracking-tighter uppercase leading-none italic">AHMET TEKELİ KASA</h1>
+                <p id="bugunTarih" class="text-[8px] font-bold text-blue-600 tracking-widest uppercase mt-1 italic"></p>
+            </div>
+            <div class="w-8"></div> </div>
 
         <div class="grid grid-cols-3 gap-1.5 mb-2">
             <button onclick="pSec('Sahip')" id="btnSahip" class="p-btn active-p p-2 rounded-xl font-black uppercase flex flex-col items-center gap-1">
                 <i class="fa-solid fa-scissors text-blue-600 text-sm"></i>
-                <span>AHMET (TEKELİ)</span>
+                <span>AHMET</span>
             </button>
             <button onclick="pSec('Ercan')" id="btnErcan" class="p-btn p-2 rounded-xl font-black uppercase text-orange-600 flex flex-col items-center gap-1">
                 <i class="fa-solid fa-scissors text-orange-500 text-sm"></i>
-                <span>ERCAN (DOĞRU)</span>
+                <span>ERCAN</span>
             </button>
             <button onclick="pSec('Efe')" id="btnEfe" class="p-btn p-2 rounded-xl font-black uppercase text-purple-600 flex flex-col items-center gap-1">
                 <i class="fa-solid fa-scissors text-purple-500 text-sm"></i>
-                <span>EFE (KARA)</span>
+                <span>EFE</span>
             </button>
-            <button onclick="pSec('Turancan')" id="btnTurancan" class="p-btn p-2 rounded-xl font-bold uppercase">TURANCAN</button>
-            <button onclick="pSec('Bekir')" id="btnBekir" class="p-btn p-2 rounded-xl font-bold uppercase">BEKİR</button>
+            <button onclick="pSec('Turancan')" id="btnTurancan" class="p-btn p-2 rounded-xl font-bold uppercase text-[8px]">TURANCAN</button>
+            <button onclick="pSec('Bekir')" id="btnBekir" class="p-btn p-2 rounded-xl font-bold uppercase text-[8px]">BEKİR</button>
             <button onclick="pSec('Gider')" id="btnGider" class="p-btn bg-red-50 text-red-600 p-2 rounded-xl font-bold uppercase italic text-[8px] flex flex-col items-center gap-0.5">
                 <i class="fa-solid fa-wallet text-[10px]"></i>
                 <span>GİDER</span>
@@ -67,7 +91,7 @@
             <button onclick="hizliDoldur('Haftalık Ödeme', 0)" class="bg-red-600 text-white py-2 rounded-lg font-black uppercase col-span-2 shadow-md">MAAŞ ÖDEMESİ</button>
         </div>
 
-        <div class="bg-slate-100 p-3 rounded-2xl mb-2 shadow-inner border border-slate-200">
+        <div class="bg-slate-100 p-3 rounded-2xl mb-2 shadow-inner border border-slate-200 text-center">
             <div class="flex gap-2 mb-2">
                 <input type="text" id="h" placeholder="İşlem / Maaş" class="w-1/2 p-2.5 rounded-xl border-none font-bold outline-none text-[10px]">
                 <input type="number" id="t" placeholder="₺" class="w-1/2 p-2.5 rounded-xl border-none font-black outline-none text-blue-600 text-base">
@@ -83,40 +107,23 @@
         </div>
 
         <div class="flex-grow bg-slate-50 rounded-xl border border-slate-200 overflow-hidden mb-2 flex flex-col min-h-[60px]">
-            <div class="overflow-y-auto max-h-20 flex-grow text-[8px]" id="islemListesi"></div>
+            <div class="overflow-y-auto max-h-24 flex-grow text-[8px]" id="islemListesi"></div>
         </div>
 
-        <div class="grid grid-cols-2 gap-2 mb-2">
+        <div class="grid grid-cols-2 gap-2 mb-2 italic">
             <div class="bg-orange-50 p-2 rounded-xl border border-orange-200">
-                <p class="font-black text-orange-600 uppercase text-center text-[7px] flex items-center justify-center gap-1 italic">
-                    <i class="fa-solid fa-scissors text-[6px]"></i> ERCAN USTA
-                </p>
-                <div class="flex justify-between font-black text-[9px] mt-1 border-b border-orange-100 pb-1">
+                <p class="font-black text-orange-600 uppercase text-center text-[7px]">ERCAN USTA</p>
+                <div class="flex justify-between font-black text-[9px] mt-1">
                     <span>İŞ: <span id="eToplamIs">0</span></span>
                     <span>PAY: <span id="pErcan">0</span></span>
                 </div>
-                <div class="text-[7px] text-red-600 font-bold mt-1 text-center italic">ÖDENEN: <span id="mErcan">0</span>₺</div>
             </div>
             <div class="bg-purple-50 p-2 rounded-xl border border-purple-200">
-                <p class="font-black text-purple-600 uppercase text-center text-[7px] flex items-center justify-center gap-1 italic">
-                    <i class="fa-solid fa-scissors text-[6px]"></i> EFE USTA
-                </p>
-                <div class="flex justify-between font-black text-[9px] mt-1 border-b border-purple-100 pb-1">
+                <p class="font-black text-purple-600 uppercase text-center text-[7px]">EFE USTA</p>
+                <div class="flex justify-between font-black text-[9px] mt-1">
                     <span>İŞ: <span id="fToplamIs">0</span></span>
                     <span>PAY: <span id="pEfe">0</span></span>
                 </div>
-                <div class="text-[7px] text-red-600 font-bold mt-1 text-center italic">ÖDENEN: <span id="mEfe">0</span>₺</div>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-2 mb-2 text-[8px]">
-            <div class="bg-blue-50 p-2 rounded-xl border border-blue-200 text-center">
-                <p class="font-black text-blue-600 uppercase">TURANCAN</p>
-                <div class="font-bold text-red-600">MAAŞ: <span id="mTurancan">0</span>₺</div>
-            </div>
-            <div class="bg-emerald-50 p-2 rounded-xl border border-emerald-200 text-center">
-                <p class="font-black text-emerald-600 uppercase">BEKİR</p>
-                <div class="font-bold text-red-600">MAAŞ: <span id="mBekir">0</span>₺</div>
             </div>
         </div>
 
@@ -125,21 +132,21 @@
                 <p class="text-[8px] font-bold text-slate-400 uppercase italic">Günlük Net Kâr</p>
                 <p id="netKalan" class="text-xl font-black text-emerald-400">0 ₺</p>
             </div>
-            <div class="flex justify-between text-[7px] font-bold text-slate-400 border-t border-white/10 pt-1">
+            <div class="flex justify-between text-[7px] font-bold text-slate-400 border-t border-white/10 pt-1 uppercase">
                 <span>CİRO: <span id="cToplam" class="text-white">0₺</span></span>
                 <span>GİDER: <span id="gToplam" class="text-red-400">0₺</span></span>
             </div>
         </div>
 
         <div class="grid grid-cols-2 gap-2">
-            <button onclick="kasaSifirla()" class="py-2.5 bg-emerald-600 text-white text-[9px] font-black rounded-xl uppercase active:scale-95 shadow-md">GÜNÜ KAPAT</button>
-            <button onclick="aySifirla()" class="py-2.5 bg-red-600 text-white text-[9px] font-black rounded-xl uppercase active:scale-95 shadow-md">AYI SIFIRLA</button>
+            <button onclick="kasaSifirla()" class="py-2.5 bg-emerald-600 text-white text-[9px] font-black rounded-xl uppercase shadow-md active:scale-95">GÜNÜ KAPAT</button>
+            <button onclick="aySifirla()" class="py-2.5 bg-red-600 text-white text-[9px] font-black rounded-xl uppercase shadow-md active:scale-95">AYI SIFIRLA</button>
         </div>
 
-        <div onclick="raporUret()" class="mt-2 bg-blue-600 text-white py-1.5 rounded-xl text-center shadow-md cursor-pointer active:scale-95 transition-all border-2 border-blue-400">
-            <h2 id="aylikCiro" class="text-sm font-black">0 ₺</h2>
-            <p class="text-[6px] font-bold uppercase opacity-80 mt-0.5 tracking-tighter italic flex items-center justify-center gap-1">
-                <i class="fa-solid fa-magnifying-glass-chart"></i> DETAYLI RAPOR VE KUMBARA İÇİN TIKLA
+        <div onclick="raporUret()" class="mt-2 bg-blue-600 text-white py-2 rounded-xl text-center shadow-md cursor-pointer border-2 border-blue-400 active:scale-95 transition-all">
+            <h2 id="aylikCiro" class="text-sm font-black italic leading-none">0 ₺</h2>
+            <p class="text-[7px] font-bold uppercase opacity-90 mt-1 tracking-tighter italic">
+                <i class="fa-solid fa-cash-register mr-1"></i> DETAYLI RAPOR VE KUMBARA
             </p>
         </div>
     </div>
@@ -166,14 +173,13 @@
             const veriler = snapshot.val(); sonKasaVerisi = veriler;
             const listDiv = document.getElementById('islemListesi');
             listDiv.innerHTML = "";
-            let tC=0, gT=0; let m = { Ercan:0, Efe:0, Turancan:0, Bekir:0 }; let u = { Ercan:0, Efe:0 };
+            let tC=0, gT=0; let u = { Ercan:0, Efe:0 };
             if (veriler) {
                 Object.values(veriler).reverse().forEach(v => {
                     const t = parseFloat(v.t);
                     let icon = v.y === 'Nakit' ? '💵' : (v.y === 'Kart' ? '💳' : '📱');
-                    listDiv.innerHTML += `<div class="islem-row flex justify-between p-1 border-b"><span><b>${v.p}:</b> ${v.h} <small class="opacity-50">${icon}</small></span><span class="font-black">${t} ₺</span></div>`;
-                    if (v.h.includes('Ödeme')) { gT += t; m[v.p] += t; } 
-                    else if (v.p === 'Gider') { gT += t; } 
+                    listDiv.innerHTML += `<div class="islem-row flex justify-between p-1.5 border-b"><span><b>${v.p}:</b> ${v.h} <small>${icon}</small></span><span class="font-black">${t} ₺</span></div>`;
+                    if (v.h.includes('Ödeme') || v.p === 'Gider') { gT += t; } 
                     else { tC += t; if(v.p==='Ercan') u.Ercan += t; if(v.p==='Efe') u.Efe += t; }
                 });
             }
@@ -181,21 +187,13 @@
             hesaplanmisNet = Math.floor(tC - (ePay + fPay + gT));
             document.getElementById('eToplamIs').innerText = u.Ercan; document.getElementById('fToplamIs').innerText = u.Efe;
             document.getElementById('pErcan').innerText = Math.floor(ePay); document.getElementById('pEfe').innerText = Math.floor(fPay);
-            document.getElementById('mErcan').innerText = m.Ercan; document.getElementById('mEfe').innerText = m.Efe;
-            document.getElementById('mTurancan').innerText = m.Turancan; document.getElementById('mBekir').innerText = m.Bekir;
             document.getElementById('cToplam').innerText = tC + " ₺"; document.getElementById('gToplam').innerText = gT + " ₺";
             document.getElementById('netKalan').innerText = hesaplanmisNet + " ₺";
         });
 
-        // GELİŞMİŞ RAPOR ÜRETME
         function raporUret() {
-            if(!sonKasaVerisi) { alert("Henüz kayıt yok abi!"); return; }
-            
-            let r = { 
-                Sahip: {n:0, k:0, i:0}, Ercan: {n:0, k:0, i:0, m:0}, Efe: {n:0, k:0, i:0, m:0}, 
-                Turancan: {m:0}, Bekir: {m:0}, Gider: 0, Ciro:0, KartTop:0, IbanTop:0, NakitTop:0
-            };
-
+            if(!sonKasaVerisi) return;
+            let r = { Sahip:{n:0,k:0,i:0}, Ercan:{n:0,k:0,i:0,m:0}, Efe:{n:0,k:0,i:0,m:0}, Turancan:{m:0}, Bekir:{m:0}, Gider:0, Ciro:0, KartTop:0, IbanTop:0, NakitTop:0 };
             Object.values(sonKasaVerisi).forEach(v => {
                 const t = parseFloat(v.t);
                 if(v.h.includes('Ödeme')) { if(r[v.p]) r[v.p].m += t; }
@@ -207,54 +205,30 @@
                     if(tip==='k') r.KartTop += t; else if(tip==='i') r.IbanTop += t; else r.NakitTop += t;
                 }
             });
-
-            const eTopIs = r.Ercan.n + r.Ercan.k + r.Ercan.i;
-            const fTopIs = r.Efe.n + r.Efe.k + r.Efe.i;
-            const ePay = eTopIs * 0.5;
-            const fPay = fTopIs * 0.3;
-            const toplamGider = ePay + fPay + r.Ercan.m + r.Efe.m + r.Turancan.m + r.Bekir.m + r.Gider;
-            const netKar = r.Ciro - toplamGider;
+            const eTop = r.Ercan.n + r.Ercan.k + r.Ercan.i;
+            const fTop = r.Efe.n + r.Efe.k + r.Efe.i;
+            const ePay = eTop * 0.5; const fPay = fTop * 0.3;
+            const tGid = ePay + fPay + r.Ercan.m + r.Efe.m + r.Turancan.m + r.Bekir.m + r.Gider;
 
             document.getElementById('raporData').innerHTML = `
                 <div class="bg-blue-50 p-3 rounded-2xl border border-blue-100">
-                    <p class="font-black text-blue-700 text-center border-b mb-2 pb-1">USTA ÖDEME DETAYLARI</p>
+                    <p class="font-black text-blue-700 border-b mb-2 pb-1 text-center italic uppercase">USTA ÖDEME DETAYLARI</p>
                     <div class="space-y-3 uppercase">
-                        <div>
-                            <span class="font-black">AHMET (TEKELİ):</span><br>
-                            💵 ${r.Sahip.n}₺ | 💳 ${r.Sahip.k}₺ | 📱 ${r.Sahip.i}₺
-                        </div>
-                        <div class="border-t pt-1">
-                            <span class="font-black text-orange-600">ERCAN (%50):</span><br>
-                            💵 ${r.Ercan.n}₺ | 💳 ${r.Ercan.k}₺ | 📱 ${r.Ercan.i}₺<br>
-                            <span class="bg-orange-100 px-1 rounded">TOPLAM İŞ: ${eTopIs}₺ | PAY: ${Math.floor(ePay)}₺</span>
-                        </div>
-                        <div class="border-t pt-1">
-                            <span class="font-black text-purple-600">EFE (%30):</span><br>
-                            💵 ${r.Efe.n}₺ | 💳 ${r.Efe.k}₺ | 📱 ${r.Efe.i}₺<br>
-                            <span class="bg-purple-100 px-1 rounded">TOPLAM İŞ: ${fTopIs}₺ | PAY: ${Math.floor(fPay)}₺</span>
-                        </div>
+                        <div><b>AHMET:</b> 💵${r.Sahip.n} | 💳${r.Sahip.k} | 📱${r.Sahip.i}</div>
+                        <div class="border-t pt-1"><b>ERCAN (%50):</b><br>💵${r.Ercan.n} | 💳${r.Ercan.k} | 📱${r.Ercan.i}<br><b>İŞ: ${eTop}₺ | PAY: ${Math.floor(ePay)}₺</b></div>
+                        <div class="border-t pt-1"><b>EFE (%30):</b><br>💵${r.Efe.n} | 💳${r.Efe.k} | 📱${r.Efe.i}<br><b>İŞ: ${fTop}₺ | PAY: ${Math.floor(fPay)}₺</b></div>
                     </div>
                 </div>
-                
-                <div class="bg-slate-100 p-3 rounded-2xl border border-slate-200">
-                    <p class="font-black text-slate-700 text-center border-b mb-2 pb-1">GÜNCEL KASA DAĞILIMI</p>
-                    <div class="flex justify-between"><span>💵 TOPLAM NAKİT:</span> <span class="font-bold">${r.NakitTop} ₺</span></div>
-                    <div class="flex justify-between"><span>💳 TOPLAM KART:</span> <span class="font-bold">${r.KartTop} ₺</span></div>
-                    <div class="flex justify-between"><span>📱 TOPLAM IBAN:</span> <span class="font-bold">${r.IbanTop} ₺</span></div>
+                <div class="bg-slate-100 p-3 rounded-2xl border border-slate-200 uppercase">
+                    <p class="font-black text-slate-700 border-b mb-1 pb-1 text-center italic">KASA DAĞILIMI</p>
+                    <div class="flex justify-between"><span>💵 NAKİT:</span> <b>${r.NakitTop} ₺</b></div>
+                    <div class="flex justify-between"><span>💳 KART:</span> <b>${r.KartTop} ₺</b></div>
+                    <div class="flex justify-between"><span>📱 IBAN:</span> <b>${r.IbanTop} ₺</b></div>
                 </div>
-
-                <div class="bg-red-50 p-3 rounded-2xl border border-red-100">
-                    <p class="font-black text-red-600 text-center border-b mb-1 pb-1">PERSONEL ÖDEMELERİ</p>
-                    <div class="grid grid-cols-2 gap-1 text-[8px] uppercase">
-                        <span>Ercan: ${r.Ercan.m}₺</span><span>Efe: ${r.Efe.m}₺</span>
-                        <span>Turancan: ${r.Turancan.m}₺</span><span>Bekir: ${r.Bekir.m}₺</span>
-                    </div>
-                </div>
-
                 <div class="bg-slate-900 text-white p-4 rounded-2xl text-center shadow-lg">
-                    <p class="text-[7px] text-slate-400 uppercase tracking-widest font-bold">DÜKKAN NET KALAN</p>
-                    <p class="text-2xl font-black text-emerald-400">${Math.floor(netKar)} ₺</p>
-                    <p class="text-[7px] mt-1 opacity-60 italic uppercase tracking-tighter">Ciro: ${r.Ciro}₺ | Giderler: ${Math.floor(toplamGider)}₺</p>
+                    <p class="text-[7px] text-slate-400 uppercase font-bold tracking-widest">DÜKKAN NET KALAN</p>
+                    <p class="text-2xl font-black text-emerald-400">${Math.floor(r.Ciro - tGid)} ₺</p>
+                    <p class="text-[7px] mt-1 opacity-60 uppercase italic">Ciro: ${r.Ciro}₺ | Gider: ${Math.floor(tGid)}₺</p>
                 </div>
             `;
             document.getElementById('raporModal').style.display = 'flex';
