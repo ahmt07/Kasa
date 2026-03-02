@@ -30,9 +30,9 @@
         </div>
 
         <div class="grid grid-cols-4 gap-2 mb-3">
-            <button onclick="pSec('Ahmet Tekeli')" id="btnSahip" class="p-btn active-p bg-slate-50 p-2 rounded-xl text-[9px] font-bold uppercase">AHMET TEKELİ</button>
-            <button onclick="pSec('Ercan Doğru')" id="btnErcan" class="p-btn bg-slate-50 p-2 rounded-xl text-[9px] font-bold uppercase">ERCAN DOĞRU</button>
-            <button onclick="pSec('Efe Kara')" id="btnEfe" class="p-btn bg-slate-50 p-2 rounded-xl text-[9px] font-bold uppercase">EFE KARA</button>
+            <button onclick="pSec('Sahip')" id="btnSahip" class="p-btn active-p bg-slate-50 p-2 rounded-xl text-[9px] font-bold uppercase text-center leading-tight">AHMET<br>TEKELİ</button>
+            <button onclick="pSec('Ercan')" id="btnErcan" class="p-btn bg-slate-50 p-2 rounded-xl text-[9px] font-bold uppercase text-center leading-tight">ERCAN<br>DOĞRU</button>
+            <button onclick="pSec('Efe')" id="btnEfe" class="p-btn bg-slate-50 p-2 rounded-xl text-[9px] font-bold uppercase text-center leading-tight">EFE<br>KARA</button>
             <button onclick="pSec('Gider')" id="btnGider" class="p-btn bg-red-50 text-red-600 p-2 rounded-xl text-[9px] font-bold uppercase">GİDER</button>
         </div>
         
@@ -59,29 +59,14 @@
         </div>
 
         <div class="space-y-2 mb-3">
-            <div class="bg-blue-50 p-3 rounded-2xl border border-blue-200 shadow-sm">
-                <p class="text-[9px] font-bold text-blue-600 uppercase text-center mb-1 italic">Dükkan Kendi İşlemleri</p>
-                <div class="text-[8px] text-blue-800 font-bold flex justify-around">
-                    <span>Nak: <span id="sN">0₺</span></span>
-                    <span>Kar: <span id="sK">0₺</span></span>
-                    <span>Iban: <span id="sI">0₺</span></span>
-                </div>
-            </div>
-
             <div class="grid grid-cols-2 gap-2">
-                <div class="bg-orange-50 p-3 rounded-2xl border border-orange-200 shadow-sm">
-                    <p class="text-[9px] font-bold text-orange-600 uppercase text-center mb-1">Ercan (%50)</p>
-                    <div class="text-[8px] text-orange-800 font-bold text-center">
-                        <p>N:<span id="eN">0₺</span> | K:<span id="eK">0₺</span> | I:<span id="eI">0₺</span></p>
-                        <p class="text-xs pt-1 border-t border-orange-200 font-black">PAY: <span id="pErcan">0 ₺</span></p>
-                    </div>
+                <div class="bg-orange-50 p-3 rounded-2xl border border-orange-200 shadow-sm text-center">
+                    <p class="text-[9px] font-bold text-orange-600 uppercase mb-1">Ercan (%50)</p>
+                    <p class="text-xs font-black text-orange-800">PAY: <span id="pErcan">0 ₺</span></p>
                 </div>
-                <div class="bg-purple-50 p-3 rounded-2xl border border-purple-200 shadow-sm">
-                    <p class="text-[9px] font-bold text-purple-600 uppercase text-center mb-1">Efe (%30)</p>
-                    <div class="text-[8px] text-purple-800 font-bold text-center">
-                        <p>N:<span id="fN">0₺</span> | K:<span id="fK">0₺</span> | I:<span id="fI">0₺</span></p>
-                        <p class="text-xs pt-1 border-t border-purple-200 font-black">PAY: <span id="pEfe">0 ₺</span></p>
-                    </div>
+                <div class="bg-purple-50 p-3 rounded-2xl border border-purple-200 shadow-sm text-center">
+                    <p class="text-[9px] font-bold text-purple-600 uppercase mb-1">Efe (%30)</p>
+                    <p class="text-xs font-black text-purple-800">PAY: <span id="pEfe">0 ₺</span></p>
                 </div>
             </div>
         </div>
@@ -91,29 +76,20 @@
                 <div><p class="text-[9px] font-bold text-slate-400 uppercase">Bugün Toplam</p><p id="cToplam" class="text-xl font-black">0 ₺</p></div>
                 <div class="text-right"><p class="text-[9px] font-bold text-red-400 uppercase">Gider</p><p id="gToplam" class="text-xl font-black text-red-400">0 ₺</p></div>
             </div>
-            <div class="grid grid-cols-3 gap-1 mb-2 text-[8px] font-bold text-center">
-                <div class="text-emerald-400">NAK: <span id="nToplam">0₺</span></div>
-                <div class="text-blue-400">KAR: <span id="kToplam">0₺</span></div>
-                <div class="text-orange-400">IBAN: <span id="iToplam">0₺</span></div>
-            </div>
-            <div class="bg-white/10 p-3 rounded-xl flex justify-between items-center">
+            <div class="bg-white/10 p-3 rounded-xl flex justify-between items-center border border-white/5">
                 <p class="text-[9px] font-bold text-slate-400 uppercase italic">Dükkan Bugün Net</p>
                 <p id="netKalan" class="text-lg font-black text-emerald-400">0 ₺</p>
             </div>
         </div>
 
-        <div class="bg-gray-50 border-2 border-dashed border-gray-200 p-4 rounded-2xl text-center mb-3">
-            <p class="text-[14px] font-bold text-slate-800 uppercase mb-1">Emine Tekeli</p>
-            <p id="ibanText" class="text-[10px] font-mono text-slate-600 mb-2 break-all px-2">TR95 0013 4000 0160 3155 6000 01</p>
-            <button onclick="kopyalaIban()" class="bg-blue-600 text-white text-[10px] px-8 py-2 rounded-full font-bold uppercase active:scale-95 shadow-md">İbanı Kopyala</button>
-        </div>
+        <button onclick="kasaSifirla()" class="w-full py-4 bg-emerald-600 text-white text-[11px] font-black rounded-2xl uppercase mb-3 shadow-lg active:scale-95 transition-all">
+            HESABI GÖR VE GÜNÜ KAPAT
+        </button>
 
-        <button onclick="kasaSifirla()" class="w-full py-3 text-slate-400 text-[9px] font-bold border-2 border-dashed border-slate-200 rounded-xl uppercase mb-3 active:text-red-600">Günü Kapat</button>
-
-        <div class="bg-blue-600 text-white p-4 rounded-[2rem] shadow-xl text-center">
-            <p class="text-[9px] font-black uppercase opacity-80 tracking-widest italic">BU AY DÜKKANA KALAN (NET KÂR)</p>
-            <h2 id="aylikCiro" class="text-2xl font-black">0 ₺</h2>
-            <p class="text-[8px] opacity-60 mt-1 uppercase tracking-wider">Giderler ve Personel Primleri Düşüldü</p>
+        <div class="bg-blue-600 text-white p-4 rounded-[2.5rem] shadow-xl text-center">
+            <p class="text-[9px] font-black uppercase opacity-80 tracking-widest italic mb-1">BU AY DÜKKANA KALAN (NET KÂR)</p>
+            <h2 id="aylikCiro" class="text-3xl font-black tracking-tighter">0 ₺</h2>
+            <p class="text-[8px] opacity-60 mt-1 uppercase">Kapatılan günlerin toplam net kârıdır</p>
         </div>
     </div>
 
@@ -127,6 +103,7 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
         let p = 'Sahip';
+        let bugunkuNetKar = 0; // Geçici hesaplama için
 
         function pSec(sec) {
             p = sec;
@@ -139,11 +116,6 @@
             document.getElementById('t').value = fiyat;
         }
 
-        function kopyalaIban() {
-            navigator.clipboard.writeText(document.getElementById('ibanText').innerText);
-            alert("İban Kopyalandı!");
-        }
-
         function kaydet() {
             const h = document.getElementById('h').value;
             const t = parseFloat(document.getElementById('t').value);
@@ -152,24 +124,9 @@
 
             const btn = document.getElementById('kayitBtn');
             btn.disabled = true;
-            const ayID = new Date().getFullYear() + "-" + (new Date().getMonth() + 1);
 
-            // Veritabanına işlemi ekle
+            // Sadece günlük kasa (kasa/) içine ekle, aylıkNet'e dokunma!
             db.ref('kasa/').push({ h, t, y, p, tarih: Date.now() });
-            
-            // AYLIK NET HESABI (Dükkana Kalan Kısmı Kaydet)
-            let dukkanNet = 0;
-            if (p === 'Gider') {
-                dukkanNet = -t; 
-            } else if (p === 'Ercan') {
-                dukkanNet = t * 0.50; // %50 dükkana
-            } else if (p === 'Efe') {
-                dukkanNet = t * 0.70; // %30 Efe payı, %70 dükkana kalır
-            } else {
-                dukkanNet = t; // Dükkan cirosunun tamamı dükkana
-            }
-
-            db.ref('aylikNet/' + ayID).transaction(curr => (curr || 0) + dukkanNet);
 
             setTimeout(() => {
                 document.getElementById('h').value = '';
@@ -181,54 +138,52 @@
         db.ref('kasa/').on('value', (snapshot) => {
             const veriler = snapshot.val();
             let nT=0, kT=0, iT=0, gTop=0;
-            let eC={n:0, k:0, i:0}, fC={n:0, k:0, i:0}, sC={n:0, k:0, i:0};
+            let eC=0, fC=0;
 
             if (veriler) {
                 Object.values(veriler).forEach(i => {
                     const t = parseFloat(i.t);
                     if (i.p === 'Gider') { gTop += t; } 
                     else {
-                        if (i.y === 'Nakit') { nT += t; if(i.p==='Ercan') eC.n+=t; else if(i.p==='Efe') fC.n+=t; else if(i.p==='Sahip') sC.n+=t; }
-                        else if (i.y === 'Kart') { kT += t; if(i.p==='Ercan') eC.k+=t; else if(i.p==='Efe') fC.k+=t; else if(i.p==='Sahip') sC.k+=t; }
-                        else if (i.y === 'Iban') { iT += t; if(i.p==='Ercan') eC.i+=t; else if(i.p==='Efe') fC.i+=t; else if(i.p==='Sahip') sC.i+=t; }
+                        if (i.y === 'Nakit') nT += t;
+                        if (i.y === 'Kart') kT += t;
+                        if (i.y === 'Iban') iT += t;
+
+                        if(i.p==='Ercan') eC += t;
+                        else if(i.p==='Efe') fC += t;
                     }
                 });
             }
 
-            const ePay = (eC.n + eC.k + eC.i) * 0.50; 
-            const fPay = (fC.n + fC.k + fC.i) * 0.30; // Efe %30 Prim
+            const ePay = eC * 0.50; 
+            const fPay = fC * 0.30; 
             const bugunToplam = nT + kT + iT;
+            bugunkuNetKar = Math.floor(bugunToplam - (ePay + fPay + gTop));
 
             document.getElementById('cToplam').innerText = bugunToplam + " ₺";
             document.getElementById('gToplam').innerText = gTop + " ₺";
-            document.getElementById('nToplam').innerText = nT + "₺";
-            document.getElementById('kToplam').innerText = kT + "₺";
-            document.getElementById('iToplam').innerText = iT + "₺";
-            
-            document.getElementById('sN').innerText = sC.n + "₺";
-            document.getElementById('sK').innerText = sC.k + "₺";
-            document.getElementById('sI').innerText = sC.i + "₺";
-
-            document.getElementById('eN').innerText = eC.n + "₺";
-            document.getElementById('eK').innerText = eC.k + "₺";
-            document.getElementById('eI').innerText = eC.i + "₺";
             document.getElementById('pErcan').innerText = Math.floor(ePay) + " ₺";
-            
-            document.getElementById('fN').innerText = fC.n + "₺";
-            document.getElementById('fK').innerText = fC.k + "₺";
-            document.getElementById('fI').innerText = fC.i + "₺";
             document.getElementById('pEfe').innerText = Math.floor(fPay) + " ₺";
-            
-            document.getElementById('netKalan').innerText = Math.floor(bugunToplam - (ePay + fPay + gTop)) + " ₺";
+            document.getElementById('netKalan').innerText = bugunkuNetKar + " ₺";
         });
 
+        // Aylık kârı sadece oku
         const ayID = new Date().getFullYear() + "-" + (new Date().getMonth() + 1);
         db.ref('aylikNet/' + ayID).on('value', (snapshot) => {
             document.getElementById('aylikCiro').innerText = Math.floor(snapshot.val() || 0).toLocaleString('tr-TR') + " ₺";
         });
 
         function kasaSifirla() {
-            if(confirm("Günü kapatıyorsun Ahmet abi?")) { db.ref('kasa/').remove(); }
+            if(confirm("Günü kapatıyorsun Ahmet abi? Bugünkü Net Kâr (" + bugunkuNetKar + " ₺) aylık toplama eklenecek.")) {
+                const ayID = new Date().getFullYear() + "-" + (new Date().getMonth() + 1);
+                
+                // ASIL HESAP BURADA: Günü kapatınca aylık toplama tek seferde ekle
+                db.ref('aylikNet/' + ayID).transaction(curr => (curr || 0) + bugunkuNetKar);
+                
+                // Günlük tabloyu temizle
+                db.ref('kasa/').remove();
+                alert("Gün başarıyla kapatıldı ve aylık kâra eklendi.");
+            }
         }
     </script>
 </body>
