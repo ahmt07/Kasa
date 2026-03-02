@@ -3,10 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ahmet Tekeli - KASA</title>
-    <link rel="apple-touch-icon" href="ikon.png">
+    <title>Ahmet Tekeli - VIP Kasa</title>
+    
+    <link rel="apple-touch-icon" href="https://img.freepik.com/premium-vector/gold-luxury-letter-at-logo-design-barber-shop-concept_616213-45.jpg">
+    <link rel="icon" href="https://img.freepik.com/premium-vector/gold-luxury-letter-at-logo-design-barber-shop-concept_616213-45.jpg">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="AT Kasa">
+
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -21,7 +25,7 @@
         
         <div class="text-center mb-4">
             <h1 class="text-2xl font-black text-slate-900 tracking-tighter uppercase">AHMET TEKELİ</h1>
-            <p class="text-[10px] font-bold text-blue-600 tracking-widest uppercase italic">AYLIK CİRO TAKİP SİSTEMİ</p>
+            <p class="text-[10px] font-bold text-blue-600 tracking-widest uppercase italic">CANLI HESAP SİSTEMİ</p>
         </div>
 
         <div class="grid grid-cols-4 gap-2 mb-4">
@@ -32,12 +36,12 @@
         </div>
         
         <div class="grid grid-cols-3 gap-2 mb-4">
-            <button onclick="hSec('Saç', 500)" class="bg-white border p-3 rounded-xl shadow-sm text-[11px] font-bold uppercase active:bg-slate-100 transition">Saç 500</button>
-            <button onclick="hSec('Sakal', 250)" class="bg-white border p-3 rounded-xl shadow-sm text-[11px] font-bold uppercase active:bg-slate-100 transition">Sakal 250</button>
-            <button onclick="hSec('saç-sakal', 700)" class="bg-blue-50 border border-blue-100 p-3 rounded-xl shadow-sm text-[11px] font-black text-blue-700 uppercase active:bg-blue-100 transition">Full 700</button>
-            <button onclick="hSec('Çocuk', 450)" class="bg-emerald-50 border border-emerald-100 p-3 rounded-xl shadow-sm text-[11px] font-black text-emerald-700 uppercase active:bg-emerald-100 transition">Çocuk 450</button>
-            <button onclick="hSec('Yıkama', 100)" class="bg-white border p-3 rounded-xl shadow-sm text-[11px] font-bold uppercase active:bg-slate-100 transition">Yıkama 100</button>
-            <button onclick="hSec('Boya', 1000)" class="bg-slate-800 text-white p-3 rounded-xl shadow-sm text-[11px] font-bold uppercase active:bg-black transition">Boya 1000</button>
+            <button onclick="hSec('Saç', 500)" class="bg-white border p-3 rounded-xl shadow-sm text-[11px] font-bold uppercase">Saç 500</button>
+            <button onclick="hSec('Sakal', 250)" class="bg-white border p-3 rounded-xl shadow-sm text-[11px] font-bold uppercase">Sakal 250</button>
+            <button onclick="hSec('Full', 700)" class="bg-blue-50 border border-blue-100 p-3 rounded-xl shadow-sm text-[11px] font-black text-blue-700 uppercase">Full 700</button>
+            <button onclick="hSec('Çocuk', 450)" class="bg-emerald-50 border border-emerald-100 p-3 rounded-xl shadow-sm text-[11px] font-black text-emerald-700 uppercase">Çocuk 450</button>
+            <button onclick="hSec('Yıkama', 100)" class="bg-white border p-3 rounded-xl shadow-sm text-[11px] font-bold uppercase">Yıkama 100</button>
+            <button onclick="hSec('Boya', 1000)" class="bg-slate-800 text-white p-3 rounded-xl shadow-sm text-[11px] font-bold uppercase">Boya 1000</button>
         </div>
 
         <div class="bg-slate-100 p-4 rounded-3xl mb-4 shadow-inner border border-slate-200 text-center">
@@ -93,13 +97,10 @@
                 <p class="text-[10px] font-black uppercase tracking-[0.3em] opacity-80 mb-1">BU AYIN TOPLAM CİROSU</p>
                 <h2 id="aylikCiro" class="text-4xl font-black tracking-tighter">0 ₺</h2>
             </div>
-            <div class="absolute right-[-10px] bottom-[-10px] opacity-20 transform rotate-12">
-                <svg width="100" height="100" fill="white" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
-            </div>
         </div>
 
         <div class="mt-auto pt-6 text-center">
-            <button onclick="kasaSifirla()" class="w-full py-4 text-slate-400 text-[10px] font-bold border-2 border-dashed border-slate-200 rounded-2xl uppercase tracking-[0.4em] active:text-red-600 active:border-red-300 transition-all">Günü Kapat (Günlüğü Siler)</button>
+            <button onclick="kasaSifirla()" class="w-full py-4 text-slate-400 text-[10px] font-bold border-2 border-dashed border-slate-200 rounded-2xl uppercase tracking-[0.4em] active:text-red-600 transition-all">Günü Kapat</button>
         </div>
     </div>
 
@@ -139,10 +140,8 @@
             const simdi = new Date();
             const ayID = simdi.getFullYear() + "-" + (simdi.getMonth() + 1);
 
-            // Veriyi hem günlük listeye hem de Aylık Ciro havuzuna yazıyoruz
             db.ref('kasa/').push({ h, t, y, p, tarih: Date.now() });
             
-            // Aylık toplamı artır (Giderler aylık cirodan düşmez, dükkan netinden düşer)
             if(p !== 'Gider') {
                 db.ref('aylik/' + ayID).transaction(current => (current || 0) + t);
             }
@@ -155,7 +154,6 @@
             }, 500);
         }
 
-        // CANLI VERİ DİNLEME
         db.ref('kasa/').on('value', (snapshot) => {
             const veriler = snapshot.val();
             let nT=0, kT=0, eCiro=0, fCiro=0, gTop=0;
@@ -189,7 +187,6 @@
             document.getElementById('netKalan').innerText = netKalan.toFixed(0) + " ₺";
         });
 
-        // AYLIK CİROYU AYRI DİNLE (Günü kapatınca silinmez)
         const simdi = new Date();
         const ayID = simdi.getFullYear() + "-" + (simdi.getMonth() + 1);
         db.ref('aylik/' + ayID).on('value', (snapshot) => {
@@ -198,7 +195,7 @@
         });
 
         function kasaSifirla() {
-            if(confirm("Sayın Ahmet Tekeli, günlük liste temizlenecek ama AYLIK CİRO kalacaktır. Günü kapatmak istiyor musunuz?")) {
+            if(confirm("Tüm günlük veriler temizlenecek. Günü kapatmak istiyor musun Ahmet abi?")) {
                 db.ref('kasa/').remove();
             }
         }
