@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ahmet Tekeli - VIP Kasa V8</title>
+    <title>Ahmet Tekeli - VIP Kasa V9</title>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -22,17 +22,24 @@
             <p id="bugunTarih" class="text-[10px] font-bold text-blue-600 tracking-widest uppercase mt-1 italic"></p>
         </div>
 
-        <div class="grid grid-cols-4 gap-2 mb-2">
+        <div class="grid grid-cols-4 gap-2 mb-3">
             <button onclick="pSec('Sahip')" id="btnSahip" class="p-btn active-p p-2 rounded-xl text-[9px] font-bold uppercase leading-tight">AHMET</button>
             <button onclick="pSec('Ercan')" id="btnErcan" class="p-btn p-2 rounded-xl text-[9px] font-bold uppercase leading-tight">ERCAN</button>
             <button onclick="pSec('Efe')" id="btnEfe" class="p-btn p-2 rounded-xl text-[9px] font-bold uppercase leading-tight">EFE</button>
             <button onclick="pSec('Gider')" id="btnGider" class="p-btn bg-red-50 text-red-600 p-2 rounded-xl text-[9px] font-bold uppercase">GİDER</button>
         </div>
 
-        <div class="grid grid-cols-3 gap-2 mb-3">
-            <button onclick="hizliEkle('Saç', 500)" class="bg-white border py-2 rounded-lg text-[10px] font-bold shadow-sm active:bg-blue-50">SAÇ 500</button>
-            <button onclick="hizliEkle('Sakal', 250)" class="bg-white border py-2 rounded-lg text-[10px] font-bold shadow-sm active:bg-blue-50">SAKAL 250</button>
-            <button onclick="hizliEkle('Saç-Sakal', 700)" class="bg-blue-50 border border-blue-200 py-2 rounded-lg text-[10px] font-black text-blue-700 shadow-sm active:bg-blue-100">FULL 700</button>
+        <div class="grid grid-cols-4 gap-1.5 mb-3">
+            <button onclick="hizliEkle('Saç', 500)" class="bg-white border py-2 rounded-lg text-[9px] font-bold shadow-sm active:bg-blue-50">SAÇ 500</button>
+            <button onclick="hizliEkle('Sakal', 250)" class="bg-white border py-2 rounded-lg text-[9px] font-bold shadow-sm active:bg-blue-50">SAKAL 250</button>
+            <button onclick="hizliEkle('Full', 700)" class="bg-blue-50 border border-blue-100 py-2 rounded-lg text-[9px] font-black text-blue-700 shadow-sm active:bg-blue-100">FULL 700</button>
+            <button onclick="hizliEkle('Çocuk', 450)" class="bg-emerald-50 border border-emerald-100 py-2 rounded-lg text-[9px] font-black text-emerald-700 shadow-sm active:bg-emerald-100">ÇOCUK 450</button>
+        </div>
+
+        <div class="bg-blue-600 text-white p-4 rounded-[2rem] text-center mb-3 shadow-lg border-2 border-blue-400">
+            <p class="text-[9px] font-black uppercase mb-1 opacity-80 tracking-widest">EMİNE TEKELİ (IBAN)</p>
+            <p id="ibanText" class="text-xl font-mono font-black mb-2 tracking-tighter">TR95 0013 4000 0160 3155 6000 01</p>
+            <button onclick="kopyalaIban()" class="bg-white text-blue-700 text-[9px] px-8 py-1.5 rounded-full font-black uppercase shadow-md active:scale-90">IBAN KOPYALA</button>
         </div>
         
         <div class="bg-slate-100 p-3 rounded-2xl mb-3 shadow-inner border border-slate-200">
@@ -50,8 +57,8 @@
             </div>
         </div>
 
-        <div class="flex-grow bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden mb-3 flex flex-col min-h-[120px]">
-            <p class="bg-slate-200 text-[9px] font-black p-2 text-center uppercase tracking-widest text-slate-500 italic">GÜNLÜK İŞLEMLER</p>
+        <div class="flex-grow bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden mb-3 flex flex-col min-h-[100px]">
+            <p class="bg-slate-200 text-[9px] font-black p-2 text-center uppercase tracking-widest text-slate-500 italic">GÜNLÜK HAREKETLER</p>
             <div class="overflow-y-auto max-h-32 flex-grow" id="islemListesi"></div>
         </div>
 
@@ -116,6 +123,11 @@
             p = sec;
             document.querySelectorAll('.p-btn').forEach(b => b.classList.remove('active-p'));
             document.getElementById('btn' + sec).classList.add('active-p');
+        }
+
+        function kopyalaIban() {
+            navigator.clipboard.writeText(document.getElementById('ibanText').innerText.replace(/\s/g, ''));
+            alert("İban Kopyalandı!");
         }
 
         function hizliEkle(islem, fiyat) {
