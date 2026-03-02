@@ -53,8 +53,8 @@
             <div class="bg-blue-50 p-3 rounded-2xl border border-blue-200 shadow-sm">
                 <p class="text-[9px] font-bold text-blue-600 uppercase text-center mb-1 italic">Dükkan Kendi İşlemleri</p>
                 <div class="text-[8px] text-blue-800 font-bold flex justify-around">
-                    <span>Nak: <span id="sN">0₺</span></span>
-                    <span>Kar: <span id="sK">0₺</span></span>
+                    <span>Nakit: <span id="sN">0₺</span></span>
+                    <span>Kart: <span id="sK">0₺</span></span>
                     <span>Iban: <span id="sI">0₺</span></span>
                 </div>
             </div>
@@ -94,17 +94,17 @@
         </div>
 
         <div class="bg-gray-50 border-2 border-dashed border-gray-200 p-4 rounded-[2rem] text-center mb-3">
-            <p class="text-[10px] font-black text-gray-500 uppercase mb-2 tracking-widest italic">Ödeme Almak İçin İban</p>
+            <p class="text-[10px] font-black text-gray-500 uppercase mb-2 italic">Ödeme İçin İban</p>
             <p class="text-[14px] font-bold text-slate-800 uppercase mb-1">Emine Tekeli</p>
             <p id="ibanText" class="text-[11px] font-mono text-slate-600 mb-3 break-all px-2">TR95 0013 4000 0160 3155 6000 01</p>
-            <button onclick="kopyalaIban()" class="bg-blue-600 text-white text-[10px] px-8 py-2.5 rounded-full font-bold uppercase active:bg-blue-800 shadow-md">İbanı Kopyala</button>
+            <button onclick="kopyalaIban()" class="bg-blue-600 text-white text-[10px] px-8 py-2.5 rounded-full font-bold uppercase active:scale-95 shadow-md">İbanı Kopyala</button>
         </div>
 
         <button onclick="kasaSifirla()" class="w-full py-3 text-slate-400 text-[9px] font-bold border-2 border-dashed border-slate-200 rounded-xl uppercase mb-3 active:text-red-600">Günü Kapat</button>
 
         <div class="bg-blue-600 text-white p-4 rounded-[2rem] shadow-xl text-center">
             <p class="text-[9px] font-black uppercase opacity-80 tracking-widest">BU AY TOPLAM CİRO</p>
-            <h2 id="aylikCiro" class="text-2xl font-black tracking-tighter">0 ₺</h2>
+            <h2 id="aylikCiro" class="text-2xl font-black">0 ₺</h2>
         </div>
     </div>
 
@@ -125,14 +125,8 @@
             document.getElementById('btn' + sec).classList.add('active-p');
         }
 
-        function hSec(ad, fiyat) {
-            document.getElementById('h').value = ad;
-            document.getElementById('t').value = fiyat;
-        }
-
         function kopyalaIban() {
-            const iban = document.getElementById('ibanText').innerText;
-            navigator.clipboard.writeText(iban);
+            navigator.clipboard.writeText(document.getElementById('ibanText').innerText);
             alert("İban Kopyalandı!");
         }
 
@@ -159,6 +153,7 @@
             }, 500);
         }
 
+        // VERİLERİ ÇEKME VE HESAPLAMA
         db.ref('kasa/').on('value', (snapshot) => {
             const veriler = snapshot.val();
             let nT=0, kT=0, iT=0, gTop=0;
@@ -169,9 +164,24 @@
                     const t = parseFloat(i.t);
                     if (i.p === 'Gider') { gTop += t; } 
                     else {
-                        if (i.y === 'Nakit') { nT += t; if(i.p==='Ercan') eC.n+=t; if(i.p==='Efe') fC.n+=t; if(i.p==='Sahip') sC.n+=t; }
-                        else if (i.y === 'Kart') { kT += t; if(i.p==='Ercan') eC.k+=t; if(i.p==='Efe') fC.k+=t; if(i.p==='Sahip') sC.k+=t; }
-                        else if (i.y === 'Iban') { iT += t; if(i.p==='Ercan') eC.i+=t; if(i.p==='Efe') fC.i+=t; if(i.p==='Sahip') sC.i+=t; }
+                        if (i.y === 'Nakit') { 
+                            nT += t; 
+                            if(i.p==='Ercan') eC.n+=t; 
+                            else if(i.p==='Efe') fC.n+=t; 
+                            else if(i.p==='Sahip') sC.n+=t; 
+                        }
+                        else if (i.y === 'Kart') { 
+                            kT += t; 
+                            if(i.p==='Ercan') eC.k+=t; 
+                            else if(i.p==='Efe') fC.k+=t; 
+                            else if(i.p==='Sahip') sC.k+=t; 
+                        }
+                        else if (i.y === 'Iban') { 
+                            iT += t; 
+                            if(i.p==='Ercan') eC.i+=t; 
+                            else if(i.p==='Efe') fC.i+=t; 
+                            else if(i.p==='Sahip') sC.i+=t; 
+                        }
                     }
                 });
             }
@@ -209,7 +219,7 @@
         });
 
         function kasaSifirla() {
-            if(confirm("Günü kapatmak istediğine emin misin Ahmet abi?")) { db.ref('kasa/').remove(); }
+            if(confirm("Ahmet abi, günü kapatıyorsun, emin misin?")) { db.ref('kasa/').remove(); }
         }
     </script>
 </body>
