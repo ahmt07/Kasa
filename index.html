@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ahmet Tekeli KASA - V37 Veresiye Fix</title>
+    <title>Ahmet Tekeli KASA - V48 Kesin Çözüm</title>
     
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ahmt07/Deneme/main/ikon.png">
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ahmt07/Kasa/main/ikon.png">
@@ -21,7 +21,7 @@
         .active-p { border-color: #2563eb !important; background-color: #eff6ff !important; color: #1e40af !important; font-weight: 900 !important; }
         .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 100; padding: 15px; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
         .modal-icerik { background: white; width: 100%; max-width: 450px; border-radius: 2.5rem; padding: 25px; max-height: 85vh; overflow-y: auto; }
-        input, select { font-size: 16px !important; }
+        .detay-gizle { display: none; }
     </style>
 </head>
 <body class="bg-slate-50 p-2 text-slate-900 text-[10px]">
@@ -30,7 +30,7 @@
         <div class="modal-icerik shadow-2xl border border-slate-200">
             <div class="flex justify-between items-center mb-4 border-b pb-2">
                 <h2 id="pTakipIsim" class="font-black uppercase text-blue-800 italic text-sm">PERSONEL PANELİ</h2>
-                <button onclick="document.getElementById('personelTakipModal').style.display='none'" class="text-red-500 font-black px-2 py-1 rounded-lg uppercase">Kapat</button>
+                <button onclick="document.getElementById('personelTakipModal').style.display='none'" class="text-red-500 font-black px-2">Kapat</button>
             </div>
             <div id="pTakipOzet" class="mb-4"></div>
             <div id="pTakipListe" class="space-y-1"></div>
@@ -38,15 +38,12 @@
     </div>
 
     <div id="veresiyeModal" class="modal-overlay">
-        <div class="modal-icerik shadow-2xl border border-slate-200">
-            <div class="flex justify-between items-center mb-4 border-b pb-2">
-                <h2 class="font-black uppercase text-blue-800 italic">VERESİYE DEFTERİ</h2>
-                <button onclick="document.getElementById('veresiyeModal').style.display='none'" class="text-red-500 font-black">Kapat</button>
-            </div>
+        <div class="modal-icerik shadow-2xl">
+            <div class="flex justify-between items-center mb-4 border-b pb-2"><h2 class="font-black uppercase text-blue-800 italic">VERESİYE DEFTERİ</h2><button onclick="document.getElementById('veresiyeModal').style.display='none'" class="text-red-500 font-black">Kapat</button></div>
             <div class="bg-blue-50 p-3 rounded-xl mb-3">
-                <input type="text" id="vMusteri" placeholder="Müşteri Adı" class="w-full p-2 mb-2 rounded-lg border-none font-bold">
+                <input type="text" id="vMusteri" placeholder="Müşteri Adı" class="w-full p-2 mb-2 rounded-lg border-none font-bold text-sm">
                 <div class="flex gap-1">
-                    <input type="number" id="vTutar" placeholder="₺ Borç" class="w-1/2 p-2 rounded-lg border-none font-black text-blue-600">
+                    <input type="number" id="vTutar" placeholder="₺" class="w-1/2 p-2 rounded-lg border-none font-black text-blue-600">
                     <button onclick="veresiyeEkle()" class="w-1/2 bg-blue-600 text-white rounded-lg font-black uppercase text-[9px]">Borç Yaz</button>
                 </div>
             </div>
@@ -55,15 +52,12 @@
     </div>
     
     <div id="giderModal" class="modal-overlay">
-        <div class="modal-icerik shadow-2xl border border-slate-200">
-            <div class="flex justify-between items-center mb-4 border-b pb-2">
-                <h2 class="font-black uppercase text-red-800">GİDERLER VE MAAŞLAR</h2>
-                <button onclick="document.getElementById('giderModal').style.display='none'" class="text-red-500 font-black">Kapat</button>
-            </div>
+        <div class="modal-icerik shadow-2xl">
+            <div class="flex justify-between items-center mb-4 border-b pb-2"><h2 class="font-black uppercase text-red-800">GİDERLER VE MAAŞLAR</h2><button onclick="document.getElementById('giderModal').style.display='none'" class="text-red-500 font-black">Kapat</button></div>
             <div class="bg-red-50 p-3 rounded-xl mb-3">
-                <input type="text" id="gAd" placeholder="Gider Adı (Örn: Kira, Fatura)" class="w-full p-2 mb-2 rounded-lg border-none">
+                <input type="text" id="gAd" placeholder="Gider Adı" class="w-full p-2 mb-2 rounded-lg border-none text-sm">
                 <div class="flex gap-1">
-                    <input type="number" id="gTutar" placeholder="₺ Tutar" class="w-1/2 p-2 rounded-lg border-none">
+                    <input type="number" id="gTutar" placeholder="₺" class="w-1/2 p-2 rounded-lg border-none">
                     <button onclick="giderPanelEkle()" class="w-1/2 bg-red-600 text-white rounded-lg font-bold uppercase text-[9px]">Gider Ekle</button>
                 </div>
             </div>
@@ -74,13 +68,13 @@
     <div id="raporModal" class="modal-overlay">
         <div class="modal-icerik shadow-2xl border border-slate-200">
             <div class="flex justify-between items-center mb-4 border-b pb-2">
-                <h2 class="font-black text-blue-800 italic uppercase">Arşiv & Rapor</h2>
-                <button onclick="document.getElementById('raporModal').style.display='none'" class="text-red-500 font-black">KAPAT</button>
+                <h2 class="font-black text-blue-800 italic uppercase text-xs">Arşiv & Rapor</h2>
+                <button onclick="document.getElementById('raporModal').style.display='none'" class="text-red-500 font-black px-2">KAPAT</button>
             </div>
             <div class="mb-4">
                 <input type="date" id="arsivTarih" onchange="arsivGetir(this.value)" class="w-full p-2 bg-slate-100 rounded-lg font-bold">
             </div>
-            <div id="raporData" class="space-y-4"></div>
+            <div id="raporData" class="space-y-2"></div>
         </div>
     </div>
 
@@ -182,37 +176,60 @@
             document.getElementById('h').value = ''; document.getElementById('t').value = '';
         }
 
-        // VERESİYE SİSTEMİ
-        function veresiyeEkle() {
-            const m = document.getElementById('vMusteri').value;
-            const t = parseFloat(document.getElementById('vTutar').value);
-            if(!m || isNaN(t)) return;
-            db.ref('veresiye/').push({ m, t, tarih: new Date().toLocaleDateString('tr-TR') });
-            document.getElementById('vMusteri').value = ''; document.getElementById('vTutar').value = '';
+        // --- ARŞİV PANEL SİSTEMİ (BOZMAYAN FIX) ---
+        async function arsivGetir(t) {
+            const alan = document.getElementById('raporData');
+            alan.innerHTML = "<p class='text-center py-5 font-bold uppercase italic opacity-50 text-[8px]'>Veriler Çekiliyor...</p>";
+            
+            let v;
+            if(t === gunID) { v = sonKasaVerisi; } 
+            else { 
+                const s = await db.ref('arsiv/' + t).once('value'); 
+                v = s.val(); 
+            }
+
+            if(!v) {
+                alan.innerHTML = "<p class='text-center py-5 text-red-500 font-bold uppercase italic text-[8px]'>Kayıt Bulunamadı.</p>";
+                return;
+            }
+
+            let html = `<div class="bg-slate-800 text-white p-2 rounded-xl text-center mb-2 font-black italic uppercase text-[8px] tracking-widest">${t} GÜNÜ RAPORU</div>`;
+            let gruplar = {};
+
+            Object.values(v).forEach(x => {
+                const isim = x.p || "Diğer";
+                if(!gruplar[isim]) gruplar[isim] = { t: 0, l: "" };
+                const tutar = parseFloat(x.t);
+                gruplar[isim].t += tutar;
+                gruplar[isim].l += `<div class="flex justify-between border-b border-slate-50 py-1.5 text-[8px] font-bold italic opacity-70 uppercase">
+                                    <span>${x.saat || '--:--'} | ${x.h}</span>
+                                    <span>${tutar} ₺</span>
+                                  </div>`;
+            });
+
+            Object.keys(gruplar).forEach(per => {
+                const safeID = "arsiv-" + per.replace(/\s/g, '');
+                html += `
+                <div class="border border-slate-100 rounded-2xl overflow-hidden bg-white shadow-sm mb-1.5">
+                    <div onclick="document.getElementById('${safeID}').classList.toggle('detay-gizle')" class="bg-slate-50 p-2.5 flex justify-between items-center font-black uppercase italic cursor-pointer active:bg-slate-200">
+                        <span class="text-slate-700 text-[9px]"><i class="fa-solid fa-user-check mr-2 opacity-40"></i>${per}</span>
+                        <span class="bg-blue-600 text-white px-3 py-1 rounded-lg text-[9px]">${gruplar[per].t} ₺</span>
+                    </div>
+                    <div id="${safeID}" class="p-2 detay-gizle bg-white border-t border-slate-50">
+                        ${gruplar[per].l}
+                    </div>
+                </div>`;
+            });
+            alan.innerHTML = html;
         }
 
-        db.ref('veresiye/').on('value', (snap) => {
-            const liste = document.getElementById('veresiyeListesi');
-            liste.innerHTML = "";
-            const veriler = snap.val();
-            if(veriler) {
-                Object.keys(veriler).forEach(k => {
-                    const v = veriler[k];
-                    liste.innerHTML += `<div class="flex justify-between items-center p-3 bg-white border rounded-xl mb-1 shadow-sm"><span class="font-black uppercase">${v.m}</span><div class="flex items-center gap-2"><span class="font-black text-blue-600">${v.t} ₺</span><button onclick="veresiyeAl('${k}', '${v.m}', ${v.t})" class="bg-emerald-500 text-white px-3 py-1 rounded-lg text-[8px] font-black uppercase">ALINDI</button></div></div>`;
-                });
-            } else {
-                liste.innerHTML = "<p class='text-center py-5 opacity-50'>Veresiye bulunmuyor.</p>";
-            }
-        });
-
-        function veresiyeAl(id, m, t) {
-            if(confirm(m + " borcunu tahsil ettin mi abi?")) {
-                db.ref('kasa/').push({ h: m + " (Veresiye Tahsilat)", t: t, y: 'Nakit', p: 'ahmet', saat: 'Tahsilat' });
-                db.ref('veresiye/' + id).remove();
-            }
+        function raporUret() { 
+            document.getElementById('raporModal').style.display = 'flex'; 
+            document.getElementById('arsivTarih').value = gunID; 
+            arsivGetir(gunID); 
         }
 
-        // DİĞER FONKSİYONLAR
+        // --- DİĞER FONKSİYONLAR (ORİJİNAL) ---
         function pPanelAc(isim) {
             if(!sonKasaVerisi) return;
             let pData = { n:0, k:0, i:0, odeme:0, liste: "" };
@@ -234,6 +251,9 @@
         function listeSatiri(v, t, k) { return `<div class="flex justify-between items-center border-b py-3 font-bold"><span>${v.saat} | ${v.h}</span><div class="flex items-center gap-3"><span>${t} ₺</span><button onclick="kayitSil('${k}')" class="text-red-500 p-1"><i class="fa-solid fa-trash-can"></i></button></div></div>`; }
         function kayitSil(id) { if(confirm("Sileyim mi abi?")) { db.ref('kasa/' + id).remove(); document.getElementById('personelTakipModal').style.display = 'none'; } }
         function giderPanelEkle() { const a = document.getElementById('gAd').value; const t = parseFloat(document.getElementById('gTutar').value); if(!a || isNaN(t)) return; db.ref('kasa/').push({ h: a, t, y: 'Nakit', p: 'Gider', saat: 'Masraf' }); document.getElementById('gAd').value = ''; document.getElementById('gTutar').value = ''; }
+        function veresiyeEkle() { const m = document.getElementById('vMusteri').value; const t = parseFloat(document.getElementById('vTutar').value); if(!m || isNaN(t)) return; db.ref('veresiye/').push({ m, t, tarih: new Date().toLocaleDateString('tr-TR') }); document.getElementById('vMusteri').value = ''; document.getElementById('vTutar').value = ''; }
+        db.ref('veresiye/').on('value', (snap) => { const liste = document.getElementById('veresiyeListesi'); liste.innerHTML = ""; const veriler = snap.val(); if(veriler) { Object.keys(veriler).forEach(k => { const v = veriler[k]; liste.innerHTML += `<div class="flex justify-between items-center p-3 bg-white border rounded-xl mb-1 shadow-sm"><span class="font-black uppercase">${v.m}</span><div class="flex items-center gap-2"><span class="font-black text-blue-600">${v.t} ₺</span><button onclick="veresiyeAl('${k}', '${v.m}', ${v.t})" class="bg-emerald-500 text-white px-3 py-1 rounded-lg text-[8px] font-black uppercase">ALINDI</button></div></div>`; }); } });
+        function veresiyeAl(id, m, t) { if(confirm(m + " borcunu tahsil ettin mi abi?")) { db.ref('kasa/').push({ h: m + " (Veresiye Tahsilat)", t: t, y: 'Nakit', p: 'ahmet', saat: 'Tahsilat' }); db.ref('veresiye/' + id).remove(); } }
 
         db.ref('kasa/').on('value', (snap) => {
             const veriler = snap.val(); sonKasaVerisi = veriler;
@@ -255,19 +275,6 @@
             document.getElementById('cToplam').innerText = tC + " ₺"; document.getElementById('gToplam').innerText = gT + " ₺";
             document.getElementById('netKalan').innerText = hesaplanmisNet + " ₺";
         });
-
-        async function arsivGetir(t) { let v; if(t === gunID) v = sonKasaVerisi; else { const s = await db.ref('arsiv/' + t).once('value'); v = s.val(); } raporOlustur(v, t); }
-        function raporUret() { document.getElementById('arsivTarih').value = gunID; arsivGetir(gunID); }
-        function raporOlustur(v, t) {
-            let html = `<div class="text-center font-black border-b pb-2 mb-4 italic uppercase">${t} RAPORU</div>`;
-            if(!v) html += "<p class='text-center opacity-50 py-5'>Kayıt yok.</p>";
-            else {
-                let gruplar = {};
-                Object.values(v).forEach(x => { if(!gruplar[x.p]) gruplar[x.p] = { t: 0, l: "" }; gruplar[x.p].t += parseFloat(x.t); gruplar[x.p].l += `<div class="flex justify-between border-b py-1 text-[8px]"><span>${x.saat} | ${x.h}</span><span>${x.t} ₺</span></div>`; });
-                Object.keys(gruplar).forEach(per => { html += `<div class="mb-3 border rounded-xl overflow-hidden"><div class="bg-slate-100 p-2 flex justify-between font-black uppercase italic"><span>${per}</span><span>${gruplar[per].t} ₺</span></div><div class="p-2">${gruplar[per].l}</div></div>`; });
-            }
-            document.getElementById('raporData').innerHTML = html; document.getElementById('raporModal').style.display = 'flex';
-        }
 
         db.ref('aylikNet/' + ayID).on('value', (s) => { document.getElementById('aylikCiro').innerText = (s.val() || 0).toLocaleString('tr-TR') + " ₺"; });
         function kasaSifirla() { if(confirm("Günü kapatıyorum abi?")) { db.ref('arsiv/' + gunID).set(sonKasaVerisi); db.ref('aylikNet/' + ayID).transaction(c => (c || 0) + hesaplanmisNet); db.ref('kasa/').remove(); } }
