@@ -93,7 +93,7 @@
             <button onclick="pSec('Ercan')" ondblclick="pPanelAc('Ercan')" id="btnErcan" class="p-btn p-3 rounded-2xl font-black uppercase text-orange-600 flex flex-col items-center gap-1"><i class="fa-solid fa-scissors text-orange-500"></i><span>ERCAN</span></button>
             <button onclick="pSec('Efe')" ondblclick="pPanelAc('Efe')" id="btnEfe" class="p-btn p-3 rounded-2xl font-black uppercase text-purple-600 flex flex-col items-center gap-1"><i class="fa-solid fa-scissors text-purple-500"></i><span>EFE</span></button>
             <button onclick="pSec('Turancan')" id="btnTurancan" class="p-btn p-3 rounded-xl font-black uppercase text-[9px]">TURANCAN</button>
-            <button onclick="pSec('Bekir')" id="btnBekir" class="p-btn p-3 rounded-xl font-black uppercase col-span-2 text-center text-[9px]">BEKİR</button>
+            <button onclick="pSec('Kerem')" id="btnKerem" class="p-btn p-3 rounded-xl font-black uppercase col-span-2 text-center text-[9px]">KEREM</button>
         </div>
 
         <div class="grid grid-cols-4 gap-1.5 mb-3">
@@ -257,7 +257,7 @@
         function pPanelAc(isim) {
             if(!sonKasaVerisi) return;
             let pData = { n:0, k:0, i:0, odeme:0, liste: "" };
-            const maasli = (isim === 'Turancan' || isim === 'Bekir');
+            const maasli = (isim === 'Turancan' || isim === 'Kerem');
             Object.keys(sonKasaVerisi).forEach(k => {
                 const v = sonKasaVerisi[k];
                 if(v.p === isim) {
