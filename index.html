@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ahmet Tekeli KASA - V49 Arşiv Fix</title>
+    <title>Ahmet Tekeli KASA - V50 Kesin Arşiv</title>
     
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/ahmt07/Deneme/main/ikon.png">
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ahmt07/Kasa/main/ikon.png">
@@ -92,8 +92,8 @@
             <button onclick="pSec('ahmet')" ondblclick="pPanelAc('ahmet')" id="btnahmet" class="p-btn active-p p-3 rounded-2xl font-black uppercase flex flex-col items-center gap-1"><i class="fa-solid fa-user-tie text-blue-600"></i><span>AHMET</span></button>
             <button onclick="pSec('Ercan')" ondblclick="pPanelAc('Ercan')" id="btnErcan" class="p-btn p-3 rounded-2xl font-black uppercase text-orange-600 flex flex-col items-center gap-1"><i class="fa-solid fa-scissors text-orange-500"></i><span>ERCAN</span></button>
             <button onclick="pSec('Efe')" ondblclick="pPanelAc('Efe')" id="btnEfe" class="p-btn p-3 rounded-2xl font-black uppercase text-purple-600 flex flex-col items-center gap-1"><i class="fa-solid fa-scissors text-purple-500"></i><span>EFE</span></button>
-            <button onclick="pSec('Turancan')" ondblclick="pPanelAc('Turancan')" id="btnTurancan" class="p-btn p-3 rounded-xl font-black uppercase text-[9px]">TURANCAN</button>
-            <button onclick="pSec('Bekir')" ondblclick="pPanelAc('Bekir')" id="btnBekir" class="p-btn p-3 rounded-xl font-black uppercase col-span-2 text-center text-[9px]">BEKİR</button>
+            <button onclick="pSec('Turancan')" id="btnTurancan" class="p-btn p-3 rounded-xl font-black uppercase text-[9px]">TURANCAN</button>
+            <button onclick="pSec('Bekir')" id="btnBekir" class="p-btn p-3 rounded-xl font-black uppercase col-span-2 text-center text-[9px]">BEKİR</button>
         </div>
 
         <div class="grid grid-cols-4 gap-1.5 mb-3">
@@ -176,14 +176,16 @@
             document.getElementById('h').value = ''; document.getElementById('t').value = '';
         }
 
-        // --- ARŞİV PANEL SİSTEMİ (HESAPLAMA EKLENMİŞ HALİ) ---
+        // --- ARŞİV PANEL SİSTEMİ (GÜNCELLENMİŞ - BUGÜNÜ DE GÖRÜR) ---
         async function arsivGetir(t) {
             const alan = document.getElementById('raporData');
             alan.innerHTML = "<p class='text-center py-5 font-black uppercase italic opacity-50 text-[10px]'>Veriler Hesaplanıyor...</p>";
             
             let v;
-            if(t === gunID) { v = sonKasaVerisi; } 
-            else { 
+            // EĞER BUGÜN SEÇİLDİYSE VE KASA HENÜZ KAPATILMADIYSA BİLE GÖSTER:
+            if(t === gunID) { 
+                v = sonKasaVerisi; 
+            } else { 
                 const s = await db.ref('arsiv/' + t).once('value'); 
                 v = s.val(); 
             }
@@ -193,7 +195,7 @@
                 return;
             }
 
-            let html = `<div class="bg-slate-900 text-white p-3 rounded-2xl text-center mb-3 font-black italic uppercase text-[10px] tracking-widest">${t} GÜNÜ RAPORU</div>`;
+            let html = `<div class="bg-slate-900 text-white p-3 rounded-2xl text-center mb-3 font-black italic uppercase text-[10px] tracking-widest">${t} RAPORU</div>`;
             let gruplar = {};
             let tCiro = 0, tGider = 0, pPaylar = { Ercan: 0, Efe: 0 };
 
@@ -215,7 +217,6 @@
             const fP = Math.floor(pPaylar.Efe * 0.3);
             const oGunNet = Math.floor(tCiro - (eP + fP + tGider));
 
-            // Gün Sonu Özeti (Mavi Kutu)
             html += `
             <div class="bg-blue-600 text-white p-4 rounded-3xl mb-4 shadow-lg border-2 border-blue-400">
                 <div class="flex justify-between border-b border-white/20 pb-2 mb-2 italic">
